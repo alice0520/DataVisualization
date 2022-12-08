@@ -1,13 +1,12 @@
 const width = 1300;
 const height = 710;
 
-const svg = d3.select("#chart-area").append("svg")
+const svg = d3.select("#local-view").append("svg")
             .attr("width", width)
             .attr("height", height);
 
 //// Map
-var teams = {};
-d3.json("global_map.json").then(geoData => {
+d3.json("world-map.json").then(geoData => {
     var width = 700;
     var height = 350;
 
