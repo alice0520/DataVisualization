@@ -16,6 +16,8 @@ getData(data);
 
 loc_data = d3.csv("world_country_loc.csv");
 
+year = 2015;
+
 function getData(data){
     data.then(d => {
         d.forEach(d => {
@@ -32,6 +34,13 @@ function getData(data){
             d.social_support = Number(d.social_support);
         });
     });   
+}
+
+function getDataByYear(year){
+    data_by_year = data.then(d =>{
+        return d.filter(function(d){return d.Year == year});
+    });
+    return data_by_year;
 }
 
 function draw_map(){
@@ -71,12 +80,14 @@ function draw_map(){
                 console.log(continent);
             });
 
+        data_by_year = getDataByYear(year);
+
         loc_data.then(loc_d => {
             country = Object.values(loc_d).map(item => item.country);
             latitude = Object.values(loc_d).map(item => item.latitude);
             longitude = Object.values(loc_d).map(item => item.longitude);
 
-            data.then(d => {
+            data_by_year.then(d => {
                 circle = gMap.selectAll("circle")
                 .data(d)
                 .enter()
@@ -89,7 +100,7 @@ function draw_map(){
                 })
                 .attr("fill", "red")
                 .attr("stroke", "black")
-                .attr("opacity", 0.5)
+                .attr("opacity", 0.8)
                 .attr("r", function(d) {
                     return d.happiness_score;
                 })
