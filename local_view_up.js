@@ -5,6 +5,8 @@ const svg = d3.select("#local-view").append("svg")
             .attr("width", width)
             .attr("height", height);
 
+var continent = "Global";
+
 //// Map
 data_map = d3.json("world-map.json");
 draw_map();
@@ -12,8 +14,9 @@ draw_map();
 data = d3.csv("WorldHappiness_Corruption_2015_2020.csv");
 getData(data);
 
+loc_data = d3.csv("world_country_loc.csv");
+
 function getData(data){
-    console.log(data)
     data.then(d => {
         d.forEach(d => {
             d.Year = Number(d.Year);
@@ -53,28 +56,52 @@ function draw_map(){
             .data(geoData.features)
             .enter()
             .append("path")
-            .attr('class', function(d) {return d.properties.continent})
+            .attr("class", function(d) {return d.properties.continent})
             .attr("width", width)
             .attr("height", height)
             .attr("stroke", "black")
             .attr("fill", "white")
             .attr("d", geoGenerator);
 
-        
+        d3.selectAll("path")
+            .on("click", function(){
+                //choose continent
+                //call Qin's function
+                continent = this.className.baseVal;
+                console.log(continent);
+            });
 
-        circle = gMap.selectAll("circle")
-                    .data(data)
-                    .enter()
-                    .append("circle")
-                    .attr("transform", function(d) {
-                        var position = projection([d.lon, d.lat])
-                        return "translate (" + position[0] + "," + position[1] + ")";
-                    })
-                    .attr("fill", "red")
-                    .attr("stroke", "black")
-                    .attr("opacity", 0.7)
-                    .attr("r", function(d) {
-                        return d.happiness_score;
-                    });
+        loc_data.then(loc_d => {
+            country = Object.values(loc_d).map(item => item.country);
+            latitude = Object.values(loc_d).map(item => item.latitude);
+            longitude = Object.values(loc_d).map(item => item.longitude);
+
+            data.then(d => {
+                circle = gMap.selectAll("circle")
+                .data(d)
+                .enter()
+                .append("circle")
+                .attr("class", function(d) {return d.continent})
+                .attr("transform", function(d) {
+                    var idx = country.findIndex(element => element == d.Country);
+                    var position = projection([longitude[idx], latitude[idx]]);
+                    return "translate (" + position[0] + "," + position[1] + ")";
+                })
+                .attr("fill", "red")
+                .attr("stroke", "black")
+                .attr("opacity", 0.5)
+                .attr("r", function(d) {
+                    return d.happiness_score;
+                })
+                .on("click", function(){
+                    //choose continent
+                    //call Qin's function
+                    continent = this.className.baseVal;
+                    console.log(continent);
+                });
+            });
+        });
+
+        
     });
 }
