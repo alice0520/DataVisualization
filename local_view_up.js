@@ -8,8 +8,8 @@ const svg = d3.select("#chart-area").append("svg")
 //// Map
 var teams = {};
 d3.json("global_map.json").then(geoData => {
-    var width = 600;
-    var height = 400;
+    var width = 700;
+    var height = 350;
 
     moveX = 0;
     moveY = 80;
