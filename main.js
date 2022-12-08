@@ -11,9 +11,10 @@ select.addEventListener("change", selectFun);
 function selectFun() {
     const switchValue = select.options[select.selectedIndex].value;
     console.log(switchValue)
-    // if(switchValue == "global") {
-    //     document.getElementById("chart-area").style = "display:none";
-    // }
+    if(switchValue == "global") {
+        document.getElementById("map_checkbox_piechart").style = "display:show";
+        document.getElementById("bar_chart_global_view").style = "display:show";
+    }
     if(switchValue == "local") {
         document.getElementById("map_checkbox_piechart").style = "display:none";
         document.getElementById("bar_chart_global_view").style = "display:none";
