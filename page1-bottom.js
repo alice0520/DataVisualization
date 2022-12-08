@@ -10,7 +10,7 @@ d3.csv("WorldHappiness_Corruption_2015_2020.csv",d3.autoType).then(data =>{
     continent_B = "Africa"; // red for B
     data = data.filter(a => a.continent==continent_A || a.continent==continent_B );
 
-    const svg = d3.select("#chart-area")
+    const svg = d3.select("#bar_chart_global_view")
                     .append("svg")
                     .attr("width", 2000)
                     .attr("height", 2000);
