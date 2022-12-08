@@ -204,8 +204,8 @@ function Select_Two_Continent() {
         }
     }
     else{
-        continent_A = "Asia"
-        continent_B = "America"
+        continent_A = null
+        continent_B = null
     }
 }
 

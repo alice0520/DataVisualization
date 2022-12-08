@@ -32,7 +32,7 @@ function Update_Barchart(){
         const y = d3.scaleLinear()
                     .domain(d3.extent(data, d=>d.happiness_score))
                     .range([HEIGHT, 0])
-                    console.log(y.domain());           
+        // console.log(y.domain());                    
         const yAxisCall = d3.axisLeft(y)
                             .ticks(5);
         
@@ -48,6 +48,7 @@ function Update_Barchart(){
                     .range([color_A,color_B]);
         console.log(color_A)
         console.log(color_B)
+        console.log("data",data.filter(a => a.continent==continent_B ));
         bar_chart_g1.append("g")
                     .selectAll("rect")
                     .data(data)
@@ -60,22 +61,22 @@ function Update_Barchart(){
                     .attr("fill", function(d) { return color(d.continent); });
     
         // X, Y ticks for the second bar chart
-        years = ['2015','2016','2017','2018','2019','2020'];
-        const x_2nd = d3.scaleBand()
-                    .domain(years)
-                    .range([0, WIDTH])
+        // years = ['2015','2016','2017','2018','2019','2020'];
+        // const x_2nd = d3.scaleBand()
+        //             .domain(years)
+        //             .range([0, WIDTH])
     
-        const xAxisCall_2nd = d3.axisBottom(x)
-                                .ticks(5);
-        bar_chart_g1.append("g")
-                    .attr("transform", `translate(${WIDTH+MARGIN.LEFT}, ${HEIGHT})`)
-                    .call(xAxisCall)
+        // const xAxisCall_2nd = d3.axisBottom(x)
+        //                         .ticks(5);
+        // bar_chart_g1.append("g")
+        //             .attr("transform", `translate(${WIDTH+MARGIN.LEFT}, ${HEIGHT})`)
+        //             .call(xAxisCall)
     
-        const y_2nd = d3.scaleLinear()
-                    .domain(d3.extent(data, d=>d.happiness_score))
-                    .range([HEIGHT, 0])
-                    console.log(y.domain());           
-        const yAxisCall_2nd = d3.axisLeft(y)
-                            .ticks(5);
+        // const y_2nd = d3.scaleLinear()
+        //             .domain(d3.extent(data, d=>d.happiness_score))
+        //             .range([HEIGHT, 0])
+        //             console.log(y.domain());           
+        // const yAxisCall_2nd = d3.axisLeft(y)
+        //                     .ticks(5);
     })
 }
