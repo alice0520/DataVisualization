@@ -14,6 +14,7 @@ draw_map();
 data = d3.csv("WorldHappiness_Corruption_2015_2020.csv");
 getData(data);
 
+// 來源：https://www.kaggle.com/datasets/paultimothymooney/latitude-and-longitude-for-every-country-and-state
 loc_data = d3.csv("world_country_loc.csv");
 
 year = 2015;
@@ -89,30 +90,47 @@ function draw_map(){
 
             data_by_year.then(d => {
                 circle = gMap.selectAll("circle")
-                .data(d)
-                .enter()
-                .append("circle")
-                .attr("class", function(d) {return d.continent})
-                .attr("transform", function(d) {
-                    var idx = country.findIndex(element => element == d.Country);
-                    var position = projection([longitude[idx], latitude[idx]]);
-                    return "translate (" + position[0] + "," + position[1] + ")";
-                })
-                .attr("fill", "red")
-                .attr("stroke", "black")
-                .attr("opacity", 0.8)
-                .attr("r", function(d) {
-                    return d.happiness_score;
-                })
-                .on("click", function(){
-                    //choose continent
-                    //call Qin's function
-                    continent = this.className.baseVal;
-                    console.log(continent);
-                });
+                            .data(d)
+                            .enter()
+                            .append("circle")
+                            .attr("class", function(d) {return d.continent})
+                            .attr("transform", function(d) {
+                                var idx = country.findIndex(element => element == d.Country);
+                                var position = projection([longitude[idx], latitude[idx]]);
+                                return "translate (" + position[0] + "," + position[1] + ")";
+                            })
+                            .attr("fill", "red")
+                            .attr("stroke", "black")
+                            .attr("opacity", 0.8)
+                            .attr("r", function(d) {
+                                return d.happiness_score;
+                            })
+                            .on("click", function(){
+                                //choose continent
+                                //call Qin's function
+                                continent = this.className.baseVal;
+                                console.log(continent);
+                            });
+
+                    var tip = d3.tip()
+                            .attr("class", "d3-tip")
+                            .html(d=>("Country: " + d.Country
+                                    + "<br><br>Happiness Score: " + d.happiness_score 
+                                    + "<br>GDP Per Capita: " + d.gdp_per_capita 
+                                    + "<br>Family: " + d.family 
+                                    + "<br>Health: " + d.health 
+                                    + "<br>Freedom: " + d.freedom 
+                                    + "<br>Generosity: " + d.generosity 
+                                    + "<br>Government Trust: " + d.government_trust 
+                                    + "<br>Dystopia Residual: " + d.dystopia_residual 
+                                    + "<br>Social Support: " + d.social_support 
+                                    + "<br>CPI Score: " + d.cpi_score));
+                    
+                    circle.call(tip);
+            
+                    circle.on("mouseover", tip.show)
+                        .on("mouseout", tip.hide);
             });
         });
-
-        
     });
 }
