@@ -9,7 +9,7 @@
 	<div>
 		<h1 style="font-family: sans-serif; float: left; position: absolute; left: 20px;">World Happiness Report</h1>
 		<div style="position: absolute; right: 0px;">
-			<select class="select">
+			<select class="select_continent">
 				<option value = "Golbal">全球</option>
 				<option value = "Asia">亞洲</option>
 				<option value = "Europe">歐洲</option>
@@ -17,7 +17,7 @@
 				<option value = "Australia">澳洲</option>
 				<option value = "Africa">非洲</option>
 			</select>
-			<select class="select">
+			<select class="select_view">
 				<option value = "local">Local View</option>
 				<option value = "global">Global View</option>
 			</select>
@@ -34,7 +34,24 @@
 			font-size: 12px;
 		}
 		/* 參考：https://huanyichuang.com/blog/styling-select-dropdown/ */
-		.select {
+		.select_view {
+			background: #003d79;
+			color: #fafafa;
+			margin: 20px;
+			width: 150px;
+			height: 40px;
+			font-size: 15px;
+			padding: 8px;
+			position: relative;
+			right: 0px;
+			border-radius: 5px;
+			appearance: none;
+			background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+			background-position: right 0.5em top 50%, 0 0;
+			background-size: contain, cover;
+			background-repeat: no-repeat, repeat;
+		}
+		.select_continent {
 			background: #003d79;
 			color: #fafafa;
 			margin: 20px;
