@@ -1,5 +1,5 @@
 d3.csv("WorldHappiness_Corruption_2015_2020.csv",d3.autoType).then(data =>{
-    console.log(data);
+    // console.log(Asia_data);
 
     const FWith = 600, FHeight = 500;
     const FLeftTopX = 100, FLeftTopY = 100;
