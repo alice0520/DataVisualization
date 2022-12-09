@@ -9,7 +9,7 @@ var continent = "Global";
 
 //// Map
 data_map = d3.json("world-map.json");
-loadLocalView();
+drawMap();
 
 data = d3.csv("WorldHappiness_Corruption_2015_2020.csv");
 getData(data);
@@ -20,10 +20,6 @@ loc_data = d3.csv("world_country_loc.csv");
 var year = 2015;
 var is_click = false;
 var continent = "Global";
-
-function loadLocalView(){
-    drawMap();
-}
 
 function getData(data){
     data.then(d => {
