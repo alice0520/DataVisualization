@@ -1,9 +1,9 @@
-const width = 1300;
-const height = 710;
+const local_width = 1300;
+const local_height = 710;
 
-const svg = d3.select("#local-view").append("svg")
-            .attr("width", width)
-            .attr("height", height);
+const local_svg = d3.select("#local-view").append("svg")
+            .attr("width", local_width)
+            .attr("height", local_height);
 
 var continent = "Global";
 
@@ -59,7 +59,7 @@ function draw_map(){
         moveX = 0;
         moveY = 80;
     
-        const gMap = svg.append("g")
+        const gMap = local_svg.append("g")
                         .attr("transform", `translate(${moveX}, ${moveY})`);
     
         var projection = d3.geoMercator()
