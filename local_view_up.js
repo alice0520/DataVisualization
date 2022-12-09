@@ -9,7 +9,8 @@ var continent = "Global";
 
 //// Map
 data_map = d3.json("world-map.json");
-draw_map();
+loadLocalView();
+// yearSlider();
 
 data = d3.csv("WorldHappiness_Corruption_2015_2020.csv");
 getData(data);
@@ -20,6 +21,10 @@ loc_data = d3.csv("world_country_loc.csv");
 var year = 2015;
 var is_click = false;
 var continent = "Golbal";
+
+function loadLocalView(){
+    drawMap();
+}
 
 function getData(data){
     data.then(d => {
@@ -51,7 +56,7 @@ function changeContinent(){
     changeMapCircleColor();
 }
 
-function draw_map(){
+function drawMap(){
     data_map.then(geoData => {
         var width = 700;
         var height = 350;
@@ -60,6 +65,7 @@ function draw_map(){
         moveY = 80;
     
         const gMap = local_svg.append("g")
+                        .attr("class", "map")
                         .attr("transform", `translate(${moveX}, ${moveY})`);
     
         var projection = d3.geoMercator()
@@ -69,6 +75,7 @@ function draw_map(){
                             .projection(projection);
     
         gMap.append("g")
+            .attr("class", "map")
             .selectAll("path")
             .data(geoData.features)
             .enter()
@@ -168,6 +175,41 @@ function draw_map(){
             });
         });
     });
+}
+
+function yearSlider(){
+    var width = 700;
+    var height = 100;
+    
+    moveX = 0;
+    moveY = 580;
+    
+    const gSlider = local_svg.append("g")
+                        .attr("class", "slider")
+                        .attr("transform", `translate(${moveX}, ${moveY})`);
+
+    gSlider.append("line")
+        .attr("class", "track")
+        // .attr("x1", x.range()[0])
+        // .attr("x2", x.range()[1])
+        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+        .attr("class", "track-inset")
+        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+        .attr("class", "track-overlay")
+        .call(d3.drag()
+            .on("start.interrupt", function() { slider.interrupt(); })
+            .on("start drag", function() {
+                currentValue = d3.event.x;
+                update(x.invert(currentValue)); 
+            })
+        );
+
+    // var slider = d3.slider()
+    //                 .scale(d3.time.scale()
+    //                 .domain([new Date(1984,1,1), new Date(2014,1,1)]))
+    //                 .axis( d3.svg.axis() )
+    //                 .snap(true)
+    //                 .value(new Date(2000,1,1))
 }
 
 function changeMapCircleColor(){
