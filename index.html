@@ -9,15 +9,15 @@
 	<div>
 		<h1 style="font-family: sans-serif; float: left; position: absolute; left: 20px;">World Happiness Report</h1>
 		<div style="position: absolute; right: 0px;">
-			<select class="select">
-				<option value = "Golbal">全球</option>
-				<option value = "Asia">亞洲</option>
-				<option value = "Europe">歐洲</option>
-				<option value = "America">美洲</option>
-				<option value = "Australia">澳洲</option>
-				<option value = "Africa">非洲</option>
+			<select class="select" id="continent" onchange="changeContinent()">
+				<option value = "Global">Global</option>
+				<option value = "Asia">Asia</option>
+				<option value = "Europe">Europe</option>
+				<option value = "America">America</option>
+				<option value = "Australia">Australia</option>
+				<option value = "Africa">Africa</option>
 			</select>
-			<select class="select">
+			<select class="select" id="view">
 				<option value = "local">Local View</option>
 				<option value = "global">Global View</option>
 			</select>

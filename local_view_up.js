@@ -17,7 +17,9 @@ getData(data);
 // 來源：https://www.kaggle.com/datasets/paultimothymooney/latitude-and-longitude-for-every-country-and-state
 loc_data = d3.csv("world_country_loc.csv");
 
-year = 2015;
+var year = 2015;
+var is_click = false;
+var continent = "Golbal";
 
 function getData(data){
     data.then(d => {
@@ -42,6 +44,11 @@ function getDataByYear(year){
         return d.filter(function(d){return d.Year == year});
     });
     return data_by_year;
+}
+
+function changeContinent(){
+    continent = document.getElementById("continent").value;
+    changeMapCircleColor();
 }
 
 function draw_map(){
@@ -77,10 +84,26 @@ function draw_map(){
             .on("click", function(){
                 //choose continent
                 //call Qin's function
-                continent = this.className.baseVal;
+                if(continent == this.className.baseVal || (continent == "America" && (this.className.baseVal == "North America" || this.className.baseVal == "South America"))){
+                    is_click = true;
+                }
+                else{
+                    is_click = false;
+                }
+                if(is_click == true){
+                    continent = "Global";
+                }
+                else{
+                    continent = this.className.baseVal;
+                    if(continent == "North America" || continent == "South America"){
+                        continent = "America";
+                    }
+                }
                 console.log(continent);
+                document.getElementById("continent").value = continent;
+                changeMapCircleColor();
             });
-
+            
         data_by_year = getDataByYear(year);
 
         loc_data.then(loc_d => {
@@ -99,17 +122,29 @@ function draw_map(){
                                 var position = projection([longitude[idx], latitude[idx]]);
                                 return "translate (" + position[0] + "," + position[1] + ")";
                             })
-                            .attr("fill", "red")
+                            .attr("fill", "pink")
                             .attr("stroke", "black")
-                            .attr("opacity", 0.8)
                             .attr("r", function(d) {
                                 return d.happiness_score;
                             })
                             .on("click", function(){
                                 //choose continent
                                 //call Qin's function
-                                continent = this.className.baseVal;
+                                if(continent == this.className.baseVal){
+                                    is_click = true;
+                                }
+                                else{
+                                    is_click = false;
+                                }
+                                if(is_click == true){
+                                    continent = "Global";
+                                }
+                                else{
+                                    continent = this.className.baseVal;
+                                }
                                 console.log(continent);
+                                document.getElementById("continent").value = continent;
+                                changeMapCircleColor();
                             });
 
                     var tip = d3.tip()
@@ -133,4 +168,43 @@ function draw_map(){
             });
         });
     });
+}
+
+function changeMapCircleColor(){
+    d3.selectAll("circle").style("fill", function(d){
+        console.log(d.continent)
+        if(d.continent == continent){
+            if(continent == "Asia"){
+                return "red";
+            }
+            else if(continent == "Europe"){
+                return "blue";
+            }
+            else if(continent == "America"){
+                return "yellow";
+            }
+            else if(continent == "Australia"){
+                return "green";
+            }
+            else if(continent == "Africa"){
+                return "purple";
+            }
+        }
+        else{
+            return "pink";
+        }
+    })
+
+    d3.selectAll("circle").style("opacity", function(d){
+        console.log(d.continent)
+        if(d.continent == continent){
+            return "0.9";
+        }
+        else{
+            if(continent == "Global"){
+                return "1.0";
+            }
+            return "0.5";
+        }
+    })
 }
