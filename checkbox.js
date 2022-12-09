@@ -68,80 +68,80 @@ d3.select("#America_checkbox").on("change",Checkbox_America);
 d3.select("#Australia_checkbox").on("change",Checkbox_Australia);
 d3.select("#Africa_checkbox").on("change",Checkbox_Africa);
 
+Update_GlobalView_Map();
+Select_Two_Continent();
+Update_Barchart();
+
 function Checkbox_Asia(){
     if(d3.select("#Asia_checkbox").property("checked")){
         console.log("Asia")
         Asia_check = 1
         cnt_check += 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
     else{
         Asia_check = 0
         cnt_check -= 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
+    Update_GlobalView_Map()
+    Select_Two_Continent()
+    Update_Barchart()
 }
 function Checkbox_Europe(){
     if(d3.select("#Europe_checkbox").property("checked")){
         console.log("Europe")
         Europe_check = 1
         cnt_check += 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
     else{
         Europe_check = 0
         cnt_check -= 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
+    Update_GlobalView_Map()
+    Select_Two_Continent()
+    console.log(color_A, color_B)
+    Update_Barchart()
 }
 function Checkbox_America(){
     if(d3.select("#America_checkbox").property("checked")){
         console.log("America")
         America_check = 1
         cnt_check += 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
     else{
         America_check = 0
         cnt_check -= 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
+    Update_GlobalView_Map()
+    Select_Two_Continent()
+    Update_Barchart()
 }
 function Checkbox_Australia(){
     if(d3.select("#Australia_checkbox").property("checked")){
         console.log("Australia")
         Australia_check = 1
         cnt_check += 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
     else{
         Australia_check = 0
         cnt_check -= 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
+    Update_GlobalView_Map()
+    Select_Two_Continent()
+    Update_Barchart()
 }
 function Checkbox_Africa(){
     if(d3.select("#Africa_checkbox").property("checked")){
         console.log("Africa")
         Africa_check = 1
         cnt_check += 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
     else {
         Africa_check = 0
         cnt_check -= 1
-        Update_GlobalView_Map()
-        Select_Two_Continent()
     }
+    Update_GlobalView_Map()
+    Select_Two_Continent()
+    Update_Barchart()
 }
 // assign continent to variable continent_A, continent_B
 function Select_Two_Continent() {
@@ -204,8 +204,8 @@ function Select_Two_Continent() {
         }
     }
     else{
-        continent_A = "Asia"
-        continent_B = "America"
+        continent_A = null
+        continent_B = null
     }
 }
 
