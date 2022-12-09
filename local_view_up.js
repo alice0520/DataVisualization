@@ -51,11 +51,11 @@ function changeContinent(){
     changeMapCircleColor();
 }
 
+var width_map = 700;
+var height_map = 350;
+
 function draw_map(){
     data_map.then(geoData => {
-        var width = 700;
-        var height = 350;
-    
         moveX = 0;
         moveY = 80;
     
@@ -63,7 +63,7 @@ function draw_map(){
                         .attr("transform", `translate(${moveX}, ${moveY})`);
     
         var projection = d3.geoMercator()
-                            .fitExtent([[0,0], [width, height]], geoData);
+                            .fitExtent([[0,0], [width_map, height_map]], geoData);
     
         var geoGenerator = d3.geoPath()
                             .projection(projection);
@@ -74,8 +74,8 @@ function draw_map(){
             .enter()
             .append("path")
             .attr("class", function(d) {return d.properties.continent})
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", width_map)
+            .attr("height", height_map)
             .attr("stroke", "black")
             .attr("fill", "white")
             .attr("d", geoGenerator);
@@ -99,7 +99,7 @@ function draw_map(){
                         continent = "America";
                     }
                 }
-                console.log(continent);
+                // console.log(continent);
                 document.getElementById("continent").value = continent;
                 changeMapCircleColor();
             });
@@ -142,7 +142,7 @@ function draw_map(){
                                 else{
                                     continent = this.className.baseVal;
                                 }
-                                console.log(continent);
+                                // console.log(continent);
                                 document.getElementById("continent").value = continent;
                                 changeMapCircleColor();
                             });
@@ -172,7 +172,7 @@ function draw_map(){
 
 function changeMapCircleColor(){
     d3.selectAll("circle").style("fill", function(d){
-        console.log(d.continent)
+        // console.log(d.continent)
         if(d.continent == continent){
             if(continent == "Asia"){
                 return "red";
@@ -196,7 +196,7 @@ function changeMapCircleColor(){
     })
 
     d3.selectAll("circle").style("opacity", function(d){
-        console.log(d.continent)
+        // console.log(d.continent)
         if(d.continent == continent){
             return "0.9";
         }
