@@ -10,7 +10,6 @@ var continent = "Global";
 //// Map
 data_map = d3.json("world-map.json");
 loadLocalView();
-// yearSlider();
 
 data = d3.csv("WorldHappiness_Corruption_2015_2020.csv");
 getData(data);
@@ -20,7 +19,7 @@ loc_data = d3.csv("world_country_loc.csv");
 
 var year = 2015;
 var is_click = false;
-var continent = "Golbal";
+var continent = "Global";
 
 function loadLocalView(){
     drawMap();
@@ -48,12 +47,34 @@ function getDataByYear(year){
     data_by_year = data.then(d =>{
         return d.filter(function(d){return d.Year == year});
     });
+    data_by_year.then(data => {
+        data = data.sort((a,b)=>d3.ascending(a.Country, b.Country));
+        return data;
+    });
     return data_by_year;
 }
 
 function changeContinent(){
     continent = document.getElementById("continent").value;
     changeMapCircleColor();
+}
+
+function changeYear(){
+    year = document.getElementById("year-slider").value;
+    document.getElementById("year-input").value = year;
+
+    data_by_year = getDataByYear(year);
+
+    data_by_year.then(data => {
+        circle.data(data)
+            .transition()
+            .duration(1000)
+            .attr("r", function(d) {
+                return  d.happiness_score * 2;
+            });
+        
+        changeMapCircleColor();
+    });  
 }
 
 function drawMap(){
@@ -131,8 +152,9 @@ function drawMap(){
                             })
                             .attr("fill", "pink")
                             .attr("stroke", "black")
+                            .attr("opacity", "0.8")
                             .attr("r", function(d) {
-                                return d.happiness_score;
+                                return d.happiness_score * 2;
                             })
                             .on("click", function(){
                                 //choose continent
@@ -154,67 +176,32 @@ function drawMap(){
                                 changeMapCircleColor();
                             });
 
-                    var tip = d3.tip()
-                            .attr("class", "d3-tip")
-                            .html(d=>("Country: " + d.Country
-                                    + "<br><br>Happiness Score: " + d.happiness_score 
-                                    + "<br>GDP Per Capita: " + d.gdp_per_capita 
-                                    + "<br>Family: " + d.family 
-                                    + "<br>Health: " + d.health 
-                                    + "<br>Freedom: " + d.freedom 
-                                    + "<br>Generosity: " + d.generosity 
-                                    + "<br>Government Trust: " + d.government_trust 
-                                    + "<br>Dystopia Residual: " + d.dystopia_residual 
-                                    + "<br>Social Support: " + d.social_support 
-                                    + "<br>CPI Score: " + d.cpi_score));
-                    
-                    circle.call(tip);
-            
-                    circle.on("mouseover", tip.show)
-                        .on("mouseout", tip.hide);
+                var tip = d3.tip()
+                        .attr("class", "d3-tip")
+                        .html(d=>("Country: " + d.Country
+                                + "<br>Year: " + d.Year 
+                                + "<br><br>Happiness Score: " + d.happiness_score 
+                                + "<br>GDP Per Capita: " + d.gdp_per_capita 
+                                + "<br>Family: " + d.family 
+                                + "<br>Health: " + d.health 
+                                + "<br>Freedom: " + d.freedom 
+                                + "<br>Generosity: " + d.generosity 
+                                + "<br>Government Trust: " + d.government_trust 
+                                + "<br>Dystopia Residual: " + d.dystopia_residual 
+                                + "<br>Social Support: " + d.social_support 
+                                + "<br>CPI Score: " + d.cpi_score));
+                
+                circle.call(tip);
+        
+                circle.on("mouseover", tip.show)
+                    .on("mouseout", tip.hide);
             });
         });
     });
 }
 
-function yearSlider(){
-    var width = 700;
-    var height = 100;
-    
-    moveX = 0;
-    moveY = 580;
-    
-    const gSlider = local_svg.append("g")
-                        .attr("class", "slider")
-                        .attr("transform", `translate(${moveX}, ${moveY})`);
-
-    gSlider.append("line")
-        .attr("class", "track")
-        // .attr("x1", x.range()[0])
-        // .attr("x2", x.range()[1])
-        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-        .attr("class", "track-inset")
-        .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-        .attr("class", "track-overlay")
-        .call(d3.drag()
-            .on("start.interrupt", function() { slider.interrupt(); })
-            .on("start drag", function() {
-                currentValue = d3.event.x;
-                update(x.invert(currentValue)); 
-            })
-        );
-
-    // var slider = d3.slider()
-    //                 .scale(d3.time.scale()
-    //                 .domain([new Date(1984,1,1), new Date(2014,1,1)]))
-    //                 .axis( d3.svg.axis() )
-    //                 .snap(true)
-    //                 .value(new Date(2000,1,1))
-}
-
 function changeMapCircleColor(){
     d3.selectAll("circle").style("fill", function(d){
-        console.log(d.continent)
         if(d.continent == continent){
             if(continent == "Asia"){
                 return "red";
@@ -238,15 +225,14 @@ function changeMapCircleColor(){
     })
 
     d3.selectAll("circle").style("opacity", function(d){
-        console.log(d.continent)
-        if(d.continent == continent){
-            return "0.9";
+        if(continent == "Global"){
+            return "0.8";
+        }
+        else if(d.continent == continent){
+            return "0.8";
         }
         else{
-            if(continent == "Global"){
-                return "1.0";
-            }
-            return "0.5";
+            return "0.4";
         }
     })
 }

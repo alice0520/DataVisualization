@@ -53,7 +53,20 @@
 		}
 	</style>
 <body>
-	<div id="local-view"></div>
+	<div id="local-view">
+		<input type="range" name="year_slider" id="year-slider" list="yearlist" min="2015" max="2020" value="2015" style="transform: translate(100px, 480px); width: 500px;" onchange="changeYear()">
+		<br>
+		<input name="year" id="year-input" value="2015" style="transform: translate(320px, 480px); width: 60px; height: 20px; text-align: center;" disabled="disabled">
+		
+		<datalist id="yearlist">
+			<option value="2015" label="2015"></option>
+			<option value="2016" label="2016"></option>
+			<option value="2017" label="2017"></option>
+			<option value="2018" label="2018"></option>
+			<option value="2019" label="2019"></option>
+			<option value="2020" label="2020"></option>
+		</datalist>
+	</div>
 	<div id="global-view" style="display: none;">
 		<div id="map_checkbox_piechart">
 			<div id="map_global_view" style="display: inline-block"></div>
