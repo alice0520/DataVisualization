@@ -12,9 +12,8 @@ const bar_chart_g1 = BarChart_svg.append("g")
                 .attr("transform", `translate(${FLeftTopX + MARGIN.LEFT}, ${FLeftTopY + MARGIN.TOP})`);
 
 function Update_Barchart(){
-    d3.selectAll("g > *").remove();
+    d3.selectAll("#bar_chart_global_view g > *").remove();
     d3.csv("WorldHappiness_Corruption_2015_2020.csv",d3.autoType).then(data =>{
-        console.log(color_A,color_B);
         var color;
         data = data.filter(a => a.continent==continent_A || a.continent==continent_B );
         // X, Y ticks for the first bar chart
@@ -46,9 +45,9 @@ function Update_Barchart(){
         color = d3.scaleOrdinal()
                     .domain(xSubgroup.domain())
                     .range([color_A,color_B]);
-        console.log(color_A)
-        console.log(color_B)
-        console.log("data",data.filter(a => a.continent==continent_B ));
+        // console.log(color_A)
+        // console.log(color_B)
+        // console.log("data",data.filter(a => a.continent==continent_B ));
         bar_chart_g1.append("g")
                     .selectAll("rect")
                     .data(data)
