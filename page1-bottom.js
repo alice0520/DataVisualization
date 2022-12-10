@@ -10,11 +10,16 @@ const BarChart_svg = d3.select("#bar_chart_global_view")
                 .attr("height", 2000);
 const bar_chart_g = BarChart_svg.append("g")
                 .attr("transform", `translate(${FLeftTopX + MARGIN.LEFT}, ${FLeftTopY + MARGIN.TOP})`);
-
+var selectedFeature="happiness_score";
+function changeFeature(){
+    selectedFeature = document.getElementById("features").value;
+    console.log(selectedFeature);
+    Update_Barchart();
+}
 function Update_Barchart(){
     d3.selectAll("#bar_chart_global_view g > *").remove();
     d3.csv("WorldHappiness_Corruption_2015_2020.csv",d3.autoType).then(data =>{
-        // console.log(data);
+        console.log(data);
         var color;
         data = data.filter(a => a.continent==continent_A || a.continent==continent_B );
         // X, Y ticks for the first bar chart
@@ -33,7 +38,7 @@ function Update_Barchart(){
                     .call(xAxisCall)
     
         const y = d3.scaleLinear()
-                    .domain(d3.extent(data, d=>d.happiness_score))
+                    .domain(d3.extent(data, d=>d[selectedFeature]))
                     .range([HEIGHT, 0])
         // console.log(y.domain());                    
         const yAxisCall = d3.axisLeft(y)
@@ -56,7 +61,7 @@ function Update_Barchart(){
             var contiB_data = data.filter(a => a.continent==continent_B&&a.Year==year);
             var sum=0,cnt=0;
             contiA_data.forEach(d=>{
-                sum+=d.happiness_score;
+                sum+=d[selectedFeature];
                 cnt+=1;
             })
             var element = {};
@@ -68,7 +73,7 @@ function Update_Barchart(){
             sum=0;
             cnt=0;
             contiB_data.forEach(d=>{
-                sum+=d.happiness_score;
+                sum+=d[selectedFeature];
                 cnt+=1;
             })
             element = {};
@@ -110,7 +115,7 @@ function Update_Barchart(){
             var country_avg = {};
             var continent;
             oneCountryData.forEach(d=>{
-                sum+=d.happiness_score;
+                sum+=d[selectedFeature];
                 continent=d.continent;
             })
             country_avg["country"]=country;
@@ -130,7 +135,7 @@ function Update_Barchart(){
                     .attr("transform","rotate(-30)");
     
         const y_country = d3.scaleLinear()
-                    .domain(d3.extent(data, d=>d.happiness_score))
+                    .domain(d3.extent(data, d=>d[selectedFeature]))
                     .range([HEIGHT, 0])
          
         const yAxisCall_2nd = d3.axisLeft(y_country)
@@ -198,7 +203,7 @@ function Update_Barchart(){
             var element = {};
             element["continent"]=continent_A;
             element["feature"]=feature;
-            element["avg"]=(sum/cnt)/max;
+            element["avg"]=max==0? 0: (sum/cnt)/max;
             feature_avg.push(element);
 
             sum=0;
@@ -211,7 +216,7 @@ function Update_Barchart(){
             })
             element = {};
             element["continent"]=continent_B;
-            element["avg"]=(sum/cnt)/max;
+            element["avg"]=max==0? 0: (sum/cnt)/max;
             element["feature"]=feature;
             feature_avg.push(element);
         })
@@ -262,7 +267,7 @@ function Update_Barchart(){
                 var continent;
                 // console.log(oneCountryData);
                 oneCountryData.forEach(d=>{
-                    sum+=d.happiness_score;
+                    sum+=d[selectedFeature];
                     continent=d.continent;
                 })
                 country_avg["country"]=country;
