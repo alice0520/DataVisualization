@@ -1,6 +1,6 @@
 const FWith = 400, FHeight = 300;
-const FLeftTopX = 100, FLeftTopY = 100;
-const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 20, BOTTOM: 100 }
+const FLeftTopX = 100, FLeftTopY = 30;
+const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 0, BOTTOM: 100 }
 const WIDTH = FWith - (MARGIN.LEFT + MARGIN.RIGHT)
 const HEIGHT = FHeight - (MARGIN.TOP + MARGIN.BOTTOM)
 
@@ -14,7 +14,7 @@ const bar_chart_g = BarChart_svg.append("g")
 function Update_Barchart(){
     d3.selectAll("#bar_chart_global_view g > *").remove();
     d3.csv("WorldHappiness_Corruption_2015_2020.csv",d3.autoType).then(data =>{
-        console.log(data);
+        // console.log(data);
         var color;
         data = data.filter(a => a.continent==continent_A || a.continent==continent_B );
         // X, Y ticks for the first bar chart
@@ -244,10 +244,10 @@ function Update_Barchart(){
                 max_year = x.domain()[Math.floor((extent[1] / x.step()))];
                 if(max_year==undefined) max_year=2020;
                 if(min_year==undefined) min_year=2015;
-                console.log(min_year,max_year);
+                // console.log(min_year,max_year);
             }
             else{
-                console.log(extent);
+                // console.log(extent);
                 min_year=2015;
                 max_year=2020;
             }
@@ -260,7 +260,7 @@ function Update_Barchart(){
                 var sum = 0;
                 var country_avg = {};
                 var continent;
-                console.log(oneCountryData);
+                // console.log(oneCountryData);
                 oneCountryData.forEach(d=>{
                     sum+=d.happiness_score;
                     continent=d.continent;
@@ -277,7 +277,7 @@ function Update_Barchart(){
                         .attr("x", (d)=>x_country(d.country))
                         .attr("y", (d)=>y_country(d.avg))
                         .attr("width", x_country.bandwidth)
-                        .attr("height", function(d){console.log(HEIGHT-y_country(d.avg)); return HEIGHT-y_country(d.avg)})
+                        .attr("height", function(d){ return HEIGHT-y_country(d.avg)})
                         .style("fill", function(d) { return color(d.continent); })
                         .style('stroke','black');
             feature_avg = [];
@@ -311,7 +311,7 @@ function Update_Barchart(){
                 element["feature"]=feature;
                 feature_avg.push(element);
             })
-            console.log(feature_avg);
+            // console.log(feature_avg);
             bar_chart_g3_bars.selectAll("rect")
                         .data(feature_avg)
                         .transition()
