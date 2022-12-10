@@ -75,11 +75,11 @@ function changeYear(){
     });  
 }
 
+var width_map = 700;
+var height_map = 350;
+
 function drawMap(){
     data_map.then(geoData => {
-        var width = 700;
-        var height = 350;
-    
         moveX = 0;
         moveY = 60;
     
@@ -88,7 +88,7 @@ function drawMap(){
                         .attr("transform", `translate(${moveX}, ${moveY})`);
     
         var projection = d3.geoMercator()
-                            .fitExtent([[0,0], [width, height]], geoData);
+                            .fitExtent([[0,0], [width_map, height_map]], geoData);
     
         var geoGenerator = d3.geoPath()
                             .projection(projection);
@@ -100,8 +100,8 @@ function drawMap(){
             .enter()
             .append("path")
             .attr("class", function(d) {return d.properties.continent})
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", width_map)
+            .attr("height", height_map)
             .attr("stroke", "black")
             .attr("fill", "white")
             .attr("d", geoGenerator);
@@ -125,7 +125,7 @@ function drawMap(){
                         continent = "America";
                     }
                 }
-                console.log(continent);
+                // console.log(continent);
                 document.getElementById("continent").value = continent;
                 changeMapCircleColor();
             });
@@ -169,7 +169,7 @@ function drawMap(){
                                 else{
                                     continent = this.className.baseVal;
                                 }
-                                console.log(continent);
+                                // console.log(continent);
                                 document.getElementById("continent").value = continent;
                                 changeMapCircleColor();
                             });
