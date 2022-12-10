@@ -5,8 +5,29 @@ var Australia_features = ["health", "government_trust", "generosity"]
 var Africa_features = ["gdp_per_capita", "dystopia_residual", "health"]
 var all_features = ["gdp_per_capita", "health", "cpi_score"]
 
+const MARGIN_s = { LEFT: 50, RIGHT: 50, TOP: 50, BOTTOM: 50 }
+const WIDTH_s = 1500 - MARGIN_s.LEFT - MARGIN_s.RIGHT
+const HEIGHT_s = 500 - MARGIN_s.TOP - MARGIN_s.BOTTOM
+const width_s = 500 - MARGIN_s.LEFT - MARGIN_s.RIGHT
+const height_s = 500 - MARGIN_s.TOP - MARGIN_s.BOTTOM
+
+const svg_scatter = d3.select("#scatter_plot")
+            .append("svg")
+            .attr('width', WIDTH_s + MARGIN_s.LEFT + MARGIN_s.RIGHT)
+            .attr('height', HEIGHT_s + MARGIN_s.TOP + MARGIN_s.BOTTOM)
+const g_scatter1 = svg_scatter.append("g")
+            .attr("transform", "translate(" + (MARGIN_s.LEFT) + "," + MARGIN_s.TOP +")");
+
+const g_scatter2 = svg_scatter.append("g")
+            .attr("transform", "translate(" + (MARGIN_s.LEFT+width_s+80) + "," + MARGIN_s.TOP +")");
+const g_scatter3 = svg_scatter.append("g")
+            .attr("transform", "translate(" + (MARGIN_s.LEFT+width_s*2+160) + "," + MARGIN_s.TOP +")");
+g_scatter = [g_scatter1, g_scatter2, g_scatter3]    //, g_scatter2, g_scatter3           
+        
 function Scatter_plot(name, year){
-    if(name == "World"){}
+    d3.selectAll("#scatter_plot g *").remove();
+    // svg_scatter.remove()
+    if(name == "Global"){}
     else if(name == "Asia"){
         all_features = Asia_features
     }
@@ -24,26 +45,17 @@ function Scatter_plot(name, year){
     }
 
     d3.csv("/WorldHappiness.csv").then(data =>{
-        if(name == "World"){
+        if(name == "Global"){
             data = data.filter(d => d.Year == year)
+        }
+        else if(name == "America"){
+            data = data.filter(d => d.continent == "South America" || d.continent == "North America")
         }
         else{
             data = data.filter(d => d.continent == name && d.Year == year)
         }
-        const MARGIN = { LEFT: 50, RIGHT: 50, TOP: 50, BOTTOM: 50 }
-        const WIDTH = 500 - MARGIN.LEFT - MARGIN.RIGHT
-        const HEIGHT = 500 - MARGIN.TOP - MARGIN.BOTTOM
-        const width_s = 500 - MARGIN.LEFT - MARGIN.RIGHT
-        const height_s = 500 - MARGIN.TOP - MARGIN.BOTTOM
         
         for (i = 0; i < 3; ++i){
-            const svg = d3.select("#scatter_plot")
-                    .append("svg")
-                    .attr('width', WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
-                    .attr('height', HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
-        
-            const g = svg.append("g")
-                    .attr("transform", "translate(" + (MARGIN.LEFT) + "," + MARGIN.TOP +")");
             var xScale = d3.scaleLinear()
                         .domain(d3.extent(data, d=>Number(d.happiness_score)))
                         .range([0, width_s]);
@@ -51,12 +63,12 @@ function Scatter_plot(name, year){
                         .domain(d3.extent(data, d=>Number(d[all_features[i]])))
                         .range([height_s, 0]);
                         
-            g.append("g")
-                .attr("transform", "translate(0," + HEIGHT + ")")
+            g_scatter[i].append("g")
+                .attr("transform", "translate(0," + HEIGHT_s + ")")
                 .call(d3.axisBottom(xScale));
-            g.append("g")
+            g_scatter[i].append("g")
                 .call(d3.axisLeft(yScale));
-            g.append("text")             
+            g_scatter[i].append("text")             
                 .attr("transform",
                         "translate(" + (width_s-180) + " ," + 
                                     (height_s+40) + ")")
@@ -64,8 +76,8 @@ function Scatter_plot(name, year){
                 .style("font-size", "25px")
                 .style("font-weight", "bold")
                 .style("font-family", "Times, Times New Roman, Georgia, serif");
-            g.append("text")     
-                .attr("y", MARGIN.TOP-60)
+            g_scatter[i].append("text")     
+                .attr("y", MARGIN_s.TOP-60)
                 .attr("x", -20 )
                 .text(all_features[i])
                 .style("font-size", "25px")
@@ -74,7 +86,7 @@ function Scatter_plot(name, year){
               
                 
             // Add dots
-            var dotsG = g.append('g')
+            var dotsG = g_scatter[i].append('g')
             var dots = dotsG.selectAll("dot")
                     .data(data)
                     .enter()
@@ -84,19 +96,19 @@ function Scatter_plot(name, year){
                     .attr("r", 3 )
                     .style("fill", function(d){
                         if(d.continent == "Asia"){
-                            return "blue";
+                            return "red";
                         }
                         else if(d.continent == "Europe"){
-                            return "yellow";
+                            return "blue";
                         }
                         else if(d.continent == "Australia"){
-                            return "black";
+                            return "green";
                         }
                         else if(d.continent == "Africa"){
                             return "purple";
                         }
                         else{
-                            return "green";
+                            return "yellow";
                         }
                     })
                     .attr('opacity', 0.7)

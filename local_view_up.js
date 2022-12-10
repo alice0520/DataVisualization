@@ -1,7 +1,7 @@
 const local_width = 1300;
-const local_height = 710;
+const local_height = 510;
 
-const local_svg = d3.select("#local-view").append("svg")
+const local_svg = d3.select("#map-local-view").append("svg")
             .attr("width", local_width)
             .attr("height", local_height);
 
@@ -53,6 +53,8 @@ function getDataByYear(year){
 function changeContinent(){
     continent = document.getElementById("continent").value;
     changeMapCircleColor();
+    console.log("change continent", continent, year)
+    Scatter_plot(continent, year)
 }
 
 function changeYear(){
@@ -70,6 +72,8 @@ function changeYear(){
             });
         
         changeMapCircleColor();
+        console.log("change year", continent, year)
+        Scatter_plot(continent, year)
     });  
 }
 
@@ -124,6 +128,8 @@ function drawMap(){
                     }
                 }
                 console.log(continent);
+                // console.log("change where?", continent, year)
+                // Scatter_plot(continent, year)
                 document.getElementById("continent").value = continent;
                 changeMapCircleColor();
             });
@@ -168,6 +174,8 @@ function drawMap(){
                                     continent = this.className.baseVal;
                                 }
                                 console.log(continent);
+                                console.log("change continent", continent, year)
+                                Scatter_plot(continent, year)
                                 document.getElementById("continent").value = continent;
                                 changeMapCircleColor();
                             });
