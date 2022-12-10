@@ -21,6 +21,8 @@ var year = 2015;
 var is_click = false;
 var continent = "Global";
 
+drawLineChart();
+
 function getData(data){
     data.then(d => {
         d.forEach(d => {
@@ -79,7 +81,7 @@ function drawMap(){
         var height = 350;
     
         moveX = 0;
-        moveY = 80;
+        moveY = 60;
     
         const gMap = local_svg.append("g")
                         .attr("class", "map")
@@ -232,3 +234,70 @@ function changeMapCircleColor(){
         }
     })
 }
+
+function drawLineChart(){
+    var allFeature = ["happiness_score", "gdp_per_capita", "family", "health", "freedom", "generosity", "government_trust", "dystopia_residual", "social_support", "cpi_score"]
+    data.then(line_data => {
+        var width = 400;
+        var height = 300;
+    
+        moveX = 800;
+        moveY = 100;
+    
+        const gLine = local_svg.append("g")
+                        .attr("class", "line-chart")
+                        .attr("transform", `translate(${moveX}, ${moveY})`);
+
+        var xScale = d3.scaleTime()
+                        .domain([new Date("2015-1-1"), new Date("2020")])
+                        .range([0, width]);
+         
+         var yScale = d3.scaleLinear()
+                        .domain([0.0, 10.0])
+                        .range([height, 0]);
+         
+        gLine.append("g")
+           .attr("transform", "translate(0," + height + ")")
+           .call(d3.axisBottom(xScale));
+         
+        gLine.append("g")
+            .call(d3.axisLeft(yScale));               
+         
+        var lineGenerator = d3.line()
+                            .x(d=>xScale(d.Year))
+                            .y(d=>yScale(d.happiness_score));
+         
+         gLine.selectAll(".line")
+            .data(line_data)
+            .enter()
+            .append("path")
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 4)
+            .attr("d", d=>lineGenerator(d));
+    });
+}
+
+function averageFeature(){
+    years = [2015, 2016, 2017, 2018, 2019, 2020];
+    avg_list = [];
+    years.forEach(async year =>{
+        data_by_year = data.then(d =>{
+            return d.filter(function(d){return d.Year == year});
+        });
+        await data_by_year.then(all_data => {
+            sum = 0;
+            all_data.forEach(d => {
+                sum += d.happiness_score;
+            });
+            avg = sum / all_data.length;
+            avg_list.push(avg);
+            console.log(avg_list);
+            if(year == 2020){
+                return avg_list
+            }
+        });
+    });
+}
+
+console.log(averageFeature());
