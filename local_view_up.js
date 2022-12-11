@@ -199,7 +199,7 @@ function drawMap(){
 }
 
 function changeMapCircleColor(){
-    d3.selectAll("circle").style("fill", function(d){
+    d3.selectAll(".map > circle").style("fill", function(d){
         if(d.continent == continent){
             if(continent == "Asia"){
                 return "red";
@@ -222,7 +222,7 @@ function changeMapCircleColor(){
         }
     })
 
-    d3.selectAll("circle").style("opacity", function(d){
+    d3.selectAll(".map > circle").style("opacity", function(d){
         if(continent == "Global"){
             return "0.8";
         }
@@ -248,8 +248,8 @@ function drawLineChart(){
             });
             avg = sum / year_data.length;
             avg_list.push({
-                key: year,
-                value: avg
+                'key': year,
+                'value': avg
             });
         });
 
@@ -279,9 +279,11 @@ function drawLineChart(){
             .call(d3.axisLeft(yScale));               
          
         const lineGenerator = d3.line()
-                            .x(d => xScale(d.key))
-                            .y(d => yScale(d.value))
-                            .curve(d3.curveLinear);
+                                .x(d => xScale(d.key))
+                                .y(d => yScale(d.value))
+                                .curve(d3.curveLinear);
+        
+        console.log(avg_list)
 
         avg_list.forEach(d => {
             console.log(xScale(d.key), yScale(d.value))
@@ -289,13 +291,13 @@ function drawLineChart(){
         })
 
         gLine.selectAll(".line")
-            .data(avg_list)
+            // .data(avg_list)
             .enter()
             .append("path")
             .attr("fill", "none")
             .attr("stroke", "blue")
             .attr("stroke-width", 10)
-            .attr("d", d=>lineGenerator(d));
+            .attr("d", lineGenerator(avg_list));
 
         gLine.append("g")
             .selectAll("dot")
