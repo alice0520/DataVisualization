@@ -1,6 +1,6 @@
 const FWith = 400, FHeight = 300;
 const FLeftTopX = 100, FLeftTopY = 30;
-const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 0, BOTTOM: 100 }
+const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 20, BOTTOM: 100 }
 const WIDTH = FWith - (MARGIN.LEFT + MARGIN.RIGHT)
 const HEIGHT = FHeight - (MARGIN.TOP + MARGIN.BOTTOM)
 
@@ -27,13 +27,29 @@ function Update_Barchart(){
         data.forEach(element => {
             years.add(element.Year);
         });
+        const bar_chart_g1 = bar_chart_g.append("g")
+                                        .attr("transform", `translate(0, ${MARGIN.TOP})`);
+        const bar_chart_g1_text= bar_chart_g.append("g");
+        bar_chart_g1_text.append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text(selectedFeature);
+        bar_chart_g1_text.append("text")
+                        .attr("x", WIDTH/2)
+                        .attr("y", HEIGHT+MARGIN.TOP*3)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("years");
+
         const x = d3.scaleBand()
                     .domain(Array.from(years))
                     .range([0, WIDTH]);
     
         const xAxisCall = d3.axisBottom(x)
                             .ticks(5);
-        bar_chart_g.append("g")
+        bar_chart_g1.append("g")
                     .attr("transform", `translate(0, ${HEIGHT})`)
                     .call(xAxisCall)
     
@@ -45,7 +61,8 @@ function Update_Barchart(){
                             .ticks(5);
         
         // The first bar chart
-        bar_chart_g.append("g").call(yAxisCall);
+        bar_chart_g1.append("g")
+                    .call(yAxisCall);
     
         var xSubgroup = d3.scaleBand()
                         .domain([continent_A,continent_B])
@@ -84,7 +101,7 @@ function Update_Barchart(){
         })
         
         // console.log(conti_year_avg);
-        const bar_chart_g1 = bar_chart_g.append("g");
+        
         bar_chart_g1.selectAll("rect")
                     .data(conti_year_avg)
                     .enter()
@@ -98,6 +115,22 @@ function Update_Barchart(){
         
     
         // X, Y ticks for the second bar chart
+        const bar_chart_g2 = bar_chart_g.append("g")
+                                        .attr("transform", `translate(0, ${MARGIN.TOP})`);
+        const bar_chart_g2_text= bar_chart_g.append("g");
+        bar_chart_g2_text.append("text")
+                        .attr("x", 0)
+                        .attr("y", HEIGHT*2)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text(selectedFeature);
+        bar_chart_g2_text.append("text")
+                        .attr("x", WIDTH*2.25)
+                        .attr("y", HEIGHT*3+MARGIN.TOP*5)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("countries");
+
         var countries = new Set();
         data.forEach(element => {
             countries.add(element.Country);
@@ -126,7 +159,6 @@ function Update_Barchart(){
         // console.log(country_data);
         const xAxisCall_2nd = d3.axisBottom(x_country)
                                 .ticks(5);
-        const bar_chart_g2 = bar_chart_g.append("g");
         bar_chart_g2.append("g")
                     .attr("transform", `translate(0, ${HEIGHT*3})`)
                     .call(xAxisCall_2nd)
@@ -162,20 +194,35 @@ function Update_Barchart(){
         "government_trust","dystopia_residual","social_support","cpi_score"];
 
         // console.log(Array.from(countries));
+
+        const bar_chart_g3 = bar_chart_g.append("g")
+                                        .attr("transform", `translate(${WIDTH+MARGIN.LEFT*2.5}, ${MARGIN.TOP})`);
+        const bar_chart_g3_text= bar_chart_g.append("g");
+        bar_chart_g3_text.append("text")
+                        .attr("x", WIDTH+MARGIN.LEFT*2.5)
+                        .attr("y", 0)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("normalized");
+        bar_chart_g3_text.append("text")
+                        .attr("x", WIDTH*3)
+                        .attr("y", HEIGHT+MARGIN.TOP*4)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("features");
+
         const x_feature = d3.scaleBand()
                             .domain(features)
                             .range([0, WIDTH*3]);
     
         const xAxisCall_3rd = d3.axisBottom(x_feature)
                                 .ticks(5);
-        const bar_chart_g3 = bar_chart_g.append("g")
-                                        .attr("transform", `translate(${WIDTH+MARGIN.LEFT}, 0)`);
+
         bar_chart_g3.append("g")
                     .attr("transform", `translate(0, ${HEIGHT})`)
                     .call(xAxisCall_3rd)
                     .selectAll("text")
-                    .attr("text-anchor","end")
-                    .attr("transform","rotate(-30)");
+                    .attr("text-anchor","middle");
     
         const y_feature = d3.scaleLinear()
                     .domain([0,1])
