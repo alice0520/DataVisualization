@@ -282,21 +282,11 @@ function drawLineChart(){
                                 .x(d => xScale(d.key))
                                 .y(d => yScale(d.value))
                                 .curve(d3.curveLinear);
-        
-        console.log(avg_list)
 
-        avg_list.forEach(d => {
-            console.log(xScale(d.key), yScale(d.value))
-            console.log(lineGenerator(d))
-        })
-
-        gLine.selectAll(".line")
-            // .data(avg_list)
-            .enter()
-            .append("path")
+        gLine.append("path")
             .attr("fill", "none")
-            .attr("stroke", "blue")
-            .attr("stroke-width", 10)
+            .attr("stroke", "black")
+            .attr("stroke-width", 3)
             .attr("d", lineGenerator(avg_list));
 
         gLine.append("g")
