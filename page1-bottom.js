@@ -1,13 +1,14 @@
 const FWith = 400, FHeight = 300;
 const FLeftTopX = 100, FLeftTopY = 30;
-const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 20, BOTTOM: 100 }
-const WIDTH = FWith - (MARGIN.LEFT + MARGIN.RIGHT)
-const HEIGHT = FHeight - (MARGIN.TOP + MARGIN.BOTTOM)
+const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 20, BOTTOM: 100 };
+const WIDTH = FWith - (MARGIN.LEFT + MARGIN.RIGHT);
+const HEIGHT = FHeight - (MARGIN.TOP + MARGIN.BOTTOM);
+var clicked = false;
 
 const BarChart_svg = d3.select("#bar_chart_global_view")
                 .append("svg")
                 .attr("width", 2000)
-                .attr("height", 2000);
+                .attr("height", 700);
 const bar_chart_g = BarChart_svg.append("g")
                 .attr("transform", `translate(${FLeftTopX + MARGIN.LEFT}, ${FLeftTopY + MARGIN.TOP})`);
 var selectedFeature="happiness_score";
@@ -16,6 +17,12 @@ function changeFeature(){
     console.log(selectedFeature);
     Update_Barchart();
 }
+
+function clickSortButton(){
+    clicked = !clicked;
+    Update_Barchart();
+}
+
 function Update_Barchart(){
     d3.selectAll("#bar_chart_global_view g > *").remove();
     d3.csv("WorldHappiness_Corruption_2015_2020.csv",d3.autoType).then(data =>{
@@ -136,9 +143,6 @@ function Update_Barchart(){
             countries.add(element.Country);
         });
         // console.log(Array.from(countries));
-        const x_country = d3.scaleBand()
-                    .domain(Array.from(countries))
-                    .range([0, WIDTH*4.5]);
 
         var country_data = [];
 
@@ -157,6 +161,17 @@ function Update_Barchart(){
             country_data.push(country_avg);
         })
         // console.log(country_data);
+        if(clicked){
+            country_data=country_data.sort(function(a, b) {
+                return d3.descending(a.avg, b.avg);
+            })
+        }
+        // console.log(country_data);
+        const x_country = d3.scaleBand()
+                    .domain(country_data.map(function(d) {
+                        return d.country;
+                    }))
+                    .range([0, WIDTH*4.5]);
         const xAxisCall_2nd = d3.axisBottom(x_country)
                                 .ticks(5);
         bar_chart_g2.append("g")

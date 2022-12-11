@@ -52,7 +52,6 @@
 			background-repeat: no-repeat, repeat;
 		}
 		.feature-selection {
-			background: #d6dada;
 			color: #111010;
 			margin: 10px;
 			width: 170px;
@@ -67,6 +66,18 @@
 			background-position: right 0.5em top 50%, 0 0;
 			background-size: contain, cover;
 			background-repeat: no-repeat, repeat;
+		}
+		.button-for-sorting {
+			border: none;
+			position:relative; 
+			left: 868px;
+			background-color: black;
+  			color: white;
+			padding: 10px 10px;
+			text-align: center;
+			font-size: 13px;
+			margin: 4px 2px;
+			cursor: pointer;
 		}
 	</style>
 <body>
@@ -96,6 +107,9 @@
 				<option value = "social_support">social_support</option>
 				<option value = "cpi_score">cpi_score</option>
 			</select>
+		</div>
+		<div>
+			<button type="button" class="button-for-sorting" onclick="clickSortButton()">Sort</button>
 		</div>
 	</div>
 	
