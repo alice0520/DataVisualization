@@ -167,12 +167,12 @@ function Update_Barchart(){
             })
         }
         // console.log(country_data);
-        const x_country = d3.scaleBand()
+        var x_country = d3.scaleBand()
                     .domain(country_data.map(function(d) {
                         return d.country;
                     }))
                     .range([0, WIDTH*4.5]);
-        const xAxisCall_2nd = d3.axisBottom(x_country)
+        var xAxisCall_2nd = d3.axisBottom(x_country)
                                 .ticks(5);
         bar_chart_g2.append("g")
                     .attr("transform", `translate(0, ${HEIGHT*3})`)
@@ -337,6 +337,23 @@ function Update_Barchart(){
                 country_avg["continent"]=continent;
                 country_data.push(country_avg);
             })
+            if(clicked){
+                country_data=country_data.sort(function(a, b) {
+                    return d3.descending(a.avg, b.avg);
+                })
+            }
+            // console.log(country_data);
+            x_country = d3.scaleBand()
+                            .domain(country_data.map(function(d) {
+                                return d.country;
+                            }))
+                            .range([0, WIDTH*4.5]);
+            xAxisCall_2nd = d3.axisBottom(x_country)
+                                .ticks(5);
+            bar_chart_g2.call(xAxisCall_2nd)
+                        .selectAll("text")
+                        .attr("text-anchor","end")
+                        .attr("transform","rotate(-30)");
             bar_chart_g2_bars.selectAll("rect")
                         .data(country_data)
                         .transition()
