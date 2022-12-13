@@ -48,7 +48,7 @@ function Update_Barchart(){
                     .range([color_A,color_B]);
         console.log(color_A)
         console.log(color_B)
-        console.log("data",data.filter(a => a.continent==continent_B ));
+        // console.log("data",data.filter(a => a.continent==continent_B ));
         bar_chart_g1.append("g")
                     .selectAll("rect")
                     .data(data)

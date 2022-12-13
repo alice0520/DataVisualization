@@ -1,11 +1,9 @@
-const local_width = 1300;
-const local_height = 510;
+const local_width = 1800;
+const local_height = 480;
 
 const local_svg = d3.select("#map-local-view").append("svg")
             .attr("width", local_width)
             .attr("height", local_height);
-
-var continent = "Global";
 
 //// Map
 data_map = d3.json("world-map.json");
@@ -20,6 +18,10 @@ loc_data = d3.csv("world_country_loc.csv");
 var year = 2015;
 var is_click = false;
 var continent = "Global";
+var feature = "happiness_score"
+var years = [2015, 2016, 2017, 2018, 2019, 2020];
+
+drawLineChart();
 
 function getData(data){
     data.then(d => {
@@ -53,8 +55,7 @@ function getDataByYear(year){
 function changeContinent(){
     continent = document.getElementById("continent").value;
     changeMapCircleColor();
-    console.log("change continent", continent, year)
-    Scatter_plot(continent, year)
+    updateLineChart(feature, continent);
 }
 
 function changeYear(){
@@ -72,25 +73,23 @@ function changeYear(){
             });
         
         changeMapCircleColor();
-        console.log("change year", continent, year)
-        Scatter_plot(continent, year)
     });  
 }
 
+var width_map = 700;
+var height_map = 350;
+
 function drawMap(){
     data_map.then(geoData => {
-        var width = 700;
-        var height = 350;
-    
         moveX = 0;
-        moveY = 80;
+        moveY = 60;
     
         const gMap = local_svg.append("g")
                         .attr("class", "map")
                         .attr("transform", `translate(${moveX}, ${moveY})`);
     
         var projection = d3.geoMercator()
-                            .fitExtent([[0,0], [width, height]], geoData);
+                            .fitExtent([[0,0], [width_map, height_map]], geoData);
     
         var geoGenerator = d3.geoPath()
                             .projection(projection);
@@ -102,16 +101,14 @@ function drawMap(){
             .enter()
             .append("path")
             .attr("class", function(d) {return d.properties.continent})
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", width_map)
+            .attr("height", height_map)
             .attr("stroke", "black")
             .attr("fill", "white")
             .attr("d", geoGenerator);
 
         d3.selectAll("path")
             .on("click", function(){
-                //choose continent
-                //call Qin's function
                 if(continent == this.className.baseVal || (continent == "America" && (this.className.baseVal == "North America" || this.className.baseVal == "South America"))){
                     is_click = true;
                 }
@@ -127,11 +124,12 @@ function drawMap(){
                         continent = "America";
                     }
                 }
-                console.log(continent);
-                // console.log("change where?", continent, year)
-                // Scatter_plot(continent, year)
                 document.getElementById("continent").value = continent;
                 changeMapCircleColor();
+                updateLineChart(feature, continent);
+                //choose continent
+                //call Qin's function
+                Update_scatter(continent)
             });
             
         data_by_year = getDataByYear(year);
@@ -159,8 +157,6 @@ function drawMap(){
                                 return d.happiness_score * 2;
                             })
                             .on("click", function(){
-                                //choose continent
-                                //call Qin's function
                                 if(continent == this.className.baseVal){
                                     is_click = true;
                                 }
@@ -173,11 +169,12 @@ function drawMap(){
                                 else{
                                     continent = this.className.baseVal;
                                 }
-                                console.log(continent);
-                                console.log("change continent", continent, year)
-                                Scatter_plot(continent, year)
                                 document.getElementById("continent").value = continent;
                                 changeMapCircleColor();
+                                updateLineChart(feature, continent);
+                                //choose continent
+                                //call Qin's function
+                                Update_scatter(continent)
                             });
 
                 var tip = d3.tip()
@@ -205,7 +202,7 @@ function drawMap(){
 }
 
 function changeMapCircleColor(){
-    d3.selectAll("circle").style("fill", function(d){
+    d3.selectAll(".map > circle").style("fill", function(d){
         if(d.continent == continent){
             if(continent == "Asia"){
                 return "red";
@@ -228,7 +225,7 @@ function changeMapCircleColor(){
         }
     })
 
-    d3.selectAll("circle").style("opacity", function(d){
+    d3.selectAll(".map > circle").style("opacity", function(d){
         if(continent == "Global"){
             return "0.8";
         }
@@ -238,5 +235,204 @@ function changeMapCircleColor(){
         else{
             return "0.4";
         }
+    })
+}
+
+var line_width = 400;
+var line_height = 300;
+
+function drawLineChart(){
+    data.then(line_data => {
+        avg_list = [];
+        years.forEach(year => {
+            year_data = line_data.filter(function(d){return d.Year == year});
+            sum = 0;
+            year_data.forEach(d => {
+                sum += d.happiness_score;
+            });
+            avg = sum / year_data.length;
+            avg_list.push({
+                'key': year,
+                'value': avg
+            });
+        });
+    
+        moveX = 800;
+        moveY = 100;
+    
+        const gLine = local_svg.append("g")
+                        .attr("class", "line-chart")
+                        .attr("transform", `translate(${moveX}, ${moveY})`);
+
+        var xScale = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.Year))
+                        .range([0, line_width]);
+         
+        var yScale = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.happiness_score))
+                        .range([line_height, 0]);
+         
+        gLine.append("g")
+           .attr("transform", "translate(0," + line_height + ")")
+           .call(d3.axisBottom(xScale).ticks(6).tickFormat(d=>String(d)));
+         
+        yAxis = gLine.append("g")
+                    .call(d3.axisLeft(yScale));            
+         
+        const lineGenerator = d3.line()
+                                .x(d => xScale(d.key))
+                                .y(d => yScale(d.value))
+                                .curve(d3.curveLinear);
+
+        lines = gLine.append("path")
+            .attr("fill", "none")
+            .attr("stroke", "black")
+            .attr("stroke-width", 3)
+            .attr("d", lineGenerator(avg_list));
+
+        points = gLine.append("g")
+            .selectAll("dot")
+            .data(avg_list)
+            .enter()
+            .append("circle")
+              .attr("cx", function(d) { return xScale(d.key) } )
+              .attr("cy", function(d) { return yScale(d.value) } )
+              .attr("r", 5)
+              .attr("fill", "#69b3a2")
+    });
+}
+
+d3.select("#selectFeature").on("change", function(d) {
+    feature = d3.select(this).property("value");
+    updateLineChart(feature, continent);
+})
+
+function updateLineChart(feature, continent){
+    data.then(line_data => {
+        if(continent != "Global"){
+            line_data = line_data.filter(function(d){return d.continent == continent});
+        }
+        avg_list = [];
+        years.forEach(year => {
+            year_data = line_data.filter(function(d){return d.Year == year});
+            sum = 0;
+            year_data.forEach(d => {
+                if(feature == "happiness_score"){
+                    sum += d.happiness_score;
+                }
+                else if(feature == "gdp_per_capita"){
+                    sum += d.gdp_per_capita;
+                }
+                else if(feature == "family"){
+                    sum += d.family;
+                }
+                else if(feature == "health"){
+                 
+                    sum += d.health;
+                }
+                else if(feature == "freedom"){
+                    sum += d.freedom;
+                }
+                else if(feature == "generosity"){
+                    sum += d.generosity;
+                }
+                else if(feature == "government_trust"){
+                    sum += d.government_trust;
+                }
+                else if(feature == "dystopia_residual"){
+                    sum += d.dystopia_residual;
+                }
+                else if(feature == "social_support"){
+                    sum += d.social_support;
+                }
+                else if(feature == "cpi_score"){
+                    sum += d.cpi_score;
+                }
+            });
+            avg = sum / year_data.length;
+            avg_list.push({
+                'key': year,
+                'value': avg
+            });
+        });
+
+        var xScale = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.Year))
+                        .range([0, line_width]);
+
+        var newy = d3.scaleLinear()
+                        .domain(d3.extent(avg_list, d=>d.value))
+                        .range([line_height, 0]);
+        
+        if(feature == "happiness_score"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.happiness_score))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "gdp_per_capita"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.gdp_per_capita))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "family"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.family))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "health"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.health))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "freedom"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.freedom))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "generosity"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.generosity))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "government_trust"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.government_trust))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "dystopia_residual"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.dystopia_residual))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "social_support"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.social_support))
+                        .range([line_height, 0]);
+        }
+        else if(feature == "cpi_score"){
+            newy = d3.scaleLinear()
+                        .domain(d3.extent(line_data, d=>d.cpi_score))
+                        .range([line_height, 0]);
+        }
+
+        var newyAxisCall = d3.axisLeft(newy);
+        
+        var t= d3.transition()
+                .duration(1000);
+        
+        yAxis.transition(t).call(newyAxisCall);
+
+        const lineGenerator = d3.line()
+                                .x(d => xScale(d.key))
+                                .y(d => newy(d.value))
+                                .curve(d3.curveLinear);
+
+        lines.transition(t)
+            .attr("d", lineGenerator(avg_list));
+
+        points.data(avg_list)
+            .transition(t)
+            .attr("cx", function(d) { return xScale(d.key) } )
+            .attr("cy", function(d) { return newy(d.value) } );
     })
 }
