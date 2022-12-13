@@ -55,6 +55,7 @@ function getDataByYear(year){
 function changeContinent(){
     continent = document.getElementById("continent").value;
     changeMapCircleColor();
+    Update_scatter(continent)
     updateLineChart(feature, continent);
 }
 
