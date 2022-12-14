@@ -51,6 +51,34 @@
 			background-size: contain, cover;
 			background-repeat: no-repeat, repeat;
 		}
+		.feature-selection {
+			color: #111010;
+			margin: 10px;
+			width: 170px;
+			height: 40px;
+			font-size: 15px;
+			padding: 10px;
+			position: relative;
+			right: 0px;
+			border-radius: 5px;
+			appearance: none;
+			background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#d6dada, #d6dada);
+			background-position: right 0.5em top 50%, 0 0;
+			background-size: contain, cover;
+			background-repeat: no-repeat, repeat;
+		}
+		.button-for-sorting {
+			border: none;
+			position:relative; 
+			left: 868px;
+			background-color: black;
+  			color: white;
+			padding: 10px 10px;
+			text-align: center;
+			font-size: 13px;
+			margin: 4px 2px;
+			cursor: pointer;
+		}
 	</style>
 <body>
 	<div id="local-view"></div>
@@ -67,6 +95,21 @@
 			</div>
 		</div>
 		<div id="bar_chart_global_view" style="display: inline-block">
+			<select class="feature-selection" id="features" onchange="changeFeature()">
+				<option value = "happiness_score">happiness_score</option>
+				<option value = "gdp_per_capita">gdp_per_capita</option>
+				<option value = "family">family</option>
+				<option value = "health">health</option>
+				<option value = "freedom">freedom</option>
+				<option value = "generosity">generosity</option>
+				<option value = "government_trust">government_trust</option>
+				<option value = "dystopia_residual">dystopia_residual</option>
+				<option value = "social_support">social_support</option>
+				<option value = "cpi_score">cpi_score</option>
+			</select>
+		</div>
+		<div>
+			<button type="button" class="button-for-sorting" onclick="clickSortButton()">Sort</button>
 		</div>
 	</div>
 	
