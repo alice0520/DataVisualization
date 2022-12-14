@@ -6,7 +6,7 @@ select.addEventListener("change", selectFun);
 
 function selectFun() {
     const switchValue = select.options[select.selectedIndex].value;
-    console.log(switchValue)
+    // console.log(switchValue)
     if(switchValue == "global") {
         document.getElementById("local-view").style = "display:none";
         document.getElementById("continent").style = "display:none";

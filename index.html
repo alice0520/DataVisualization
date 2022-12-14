@@ -8,7 +8,7 @@
 <header>
 	<div>
 		<h1 style="font-family: sans-serif; float: left; position: absolute; left: 20px;">World Happiness Report</h1>
-		<div style="position: absolute; right: 0px;">
+		<div style="position: absolute; right: 0px; display: inline-block">
 			<select class="select" id="continent" onchange="changeContinent()">
 				<option value = "Global">Global</option>
 				<option value = "Asia">Asia</option>
@@ -53,32 +53,36 @@
 		}
 	</style>
 <body>
-	<div id="local-view">
-		<input type="range" name="year_slider" id="year-slider" list="yearlist" min="2015" max="2020" value="2015" style="transform: translate(100px, 480px); width: 500px;" onchange="changeYear()">
-		<br>
-		<input name="year" id="year-input" value="2015" style="transform: translate(320px, 480px); width: 60px; height: 20px; text-align: center;" disabled="disabled">
-		
-		<datalist id="yearlist">
-			<option value="2015" label="2015"></option>
-			<option value="2016" label="2016"></option>
-			<option value="2017" label="2017"></option>
-			<option value="2018" label="2018"></option>
-			<option value="2019" label="2019"></option>
-			<option value="2020" label="2020"></option>
-		</datalist>
+	<div id="local-view" style="display: inline-block">
+		<div id="map-local-view" style="display: inline-block">
+			<input type="range" name="year_slider" id="year-slider" list="yearlist" min="2015" max="2020" value="2015" style="transform: translate(150px, 450px); width: 550px; " onchange="changeYear()">
+			<br>
+			<input name="year" id="year-input" value="2015" style="transform: translate(720px, -75px); width: 60px; height: 20px; text-align: center;" disabled="disabled">
+			
+			<datalist id="yearlist">
+				<option value="2015" label="2015"></option>
+				<option value="2016" label="2016"></option>
+				<option value="2017" label="2017"></option>
+				<option value="2018" label="2018"></option>
+				<option value="2019" label="2019"></option>
+				<option value="2020" label="2020"></option>
+			</datalist>
 
-		<select id="selectFeature" style="transform: translate(650px, 80px); width: 130px; height: 30px; text-align: center;">
-			<option value = "happiness_score">Happiness Score</option>
-			<option value = "gdp_per_capita">GDP Per Capita</option>
-			<option value = "family">Family</option>
-			<option value = "health">Health</option>
-			<option value = "freedom">Freedom</option>
-			<option value = "generosity">Generosity</option>
-			<option value = "government_trust">Government Trust</option>
-			<option value = "dystopia_residual">Dystopia Residual</option>
-			<option value = "social_support">Social Support</option>
-			<option value = "cpi_score">CPI Score</option>
-		</select>
+			<select id="selectFeature" style="transform: translate(650px, 80px); width: 130px; height: 30px; text-align: center;">
+				<option value = "happiness_score">Happiness Score</option>
+				<option value = "gdp_per_capita">GDP Per Capita</option>
+				<option value = "family">Family</option>
+				<option value = "health">Health</option>
+				<option value = "freedom">Freedom</option>
+				<option value = "generosity">Generosity</option>
+				<option value = "government_trust">Government Trust</option>
+				<option value = "dystopia_residual">Dystopia Residual</option>
+				<option value = "social_support">Social Support</option>
+				<option value = "cpi_score">CPI Score</option>
+			</select>
+		</div>
+		<div id="scatter_plot" style="display: inline-block"></div>
+	</div>
 	</div>
 	<div id="global-view" style="display: none;">
 		<div id="map_checkbox_piechart">
@@ -102,6 +106,10 @@
 	<script src="local_view_up.js"></script>
 	<script src="page1-bottom.js"></script>
 	<script src="checkbox.js"></script>
+	<script src="project.js"></script>
 </body>
 </html>
+
+	
+
 

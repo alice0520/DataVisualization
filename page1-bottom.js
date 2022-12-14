@@ -45,8 +45,8 @@ function Update_Barchart(){
         color = d3.scaleOrdinal()
                     .domain(xSubgroup.domain())
                     .range([color_A,color_B]);
-        // console.log(color_A)
-        // console.log(color_B)
+        console.log(color_A)
+        console.log(color_B)
         // console.log("data",data.filter(a => a.continent==continent_B ));
         bar_chart_g1.append("g")
                     .selectAll("rect")

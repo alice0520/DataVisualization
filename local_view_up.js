@@ -1,7 +1,7 @@
-const local_width = 1300;
-const local_height = 710;
+const local_width = 1800;
+const local_height = 480;
 
-const local_svg = d3.select("#local-view").append("svg")
+const local_svg = d3.select("#map-local-view").append("svg")
             .attr("width", local_width)
             .attr("height", local_height);
 
@@ -55,6 +55,7 @@ function getDataByYear(year){
 function changeContinent(){
     continent = document.getElementById("continent").value;
     changeMapCircleColor();
+    Update_scatter(continent)
     updateLineChart(feature, continent);
 }
 
@@ -127,8 +128,7 @@ function drawMap(){
                 document.getElementById("continent").value = continent;
                 changeMapCircleColor();
                 updateLineChart(feature, continent);
-                //choose continent
-                //call Qin's function
+                Update_scatter(continent);
             });
             
         data_by_year = getDataByYear(year);
@@ -171,8 +171,7 @@ function drawMap(){
                                 document.getElementById("continent").value = continent;
                                 changeMapCircleColor();
                                 updateLineChart(feature, continent);
-                                //choose continent
-                                //call Qin's function
+                                Update_scatter(continent);
                             });
 
                 var tip = d3.tip()
