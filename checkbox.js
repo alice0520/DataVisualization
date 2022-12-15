@@ -36,14 +36,14 @@ function draw_map_global(){
 }
 
 // checkbox
-Asia_data = data_origin.then(data =>{
-    return data.filter(function(d){return d.continent == "Asia"})
+Asia_data = data_origin.then(d =>{
+    return d.filter(function(d){return d.continent == "Asia"})
 })
 Europe_data = data_origin.then(d=>{
     return d.filter(function(d){return d.continent == "Europe"})
 })
 America_data = data_origin.then(d=>{
-    return d.filter(function(d){return d.continent == "North America" || d.continent == "South America"})
+    return d.filter(function(d){return d.continent == "America"})
 })
 Australia_data = data_origin.then(d=>{
     return d.filter(function(d){return d.continent == "Australia"})
@@ -218,6 +218,8 @@ function Reset_Default() {
     document.getElementById("Australia_checkbox").checked = false;
     document.getElementById("Africa_checkbox").checked = true;
     Update_GlobalView_Map();
+    Select_Two_Continent();
+    Update_Barchart();
 }
 
 function Update_GlobalView_Map(){
@@ -237,9 +239,9 @@ function Update_GlobalView_Map(){
                 .attr('fill', 'blue');
         }
         if(America_check) {
-            map_checkbox_g.selectAll(".South.America")
+            map_checkbox_g.selectAll(".America")
                 .attr('fill', 'yellow');
-            map_checkbox_g.selectAll(".North.America")
+            map_checkbox_g.selectAll(".America")
                 .attr('fill', 'yellow');
         }
         if(Australia_check){
@@ -263,9 +265,9 @@ function Update_GlobalView_Map(){
                 .attr('fill', 'blue');
         }
         if(America_check) {
-            map_checkbox_g.selectAll(".South.America")
+            map_checkbox_g.selectAll(".America")
                 .attr('fill', 'yellow');
-            map_checkbox_g.selectAll(".North.America")
+            map_checkbox_g.selectAll(".America")
                 .attr('fill', 'yellow');
         }
         if(Australia_check){
