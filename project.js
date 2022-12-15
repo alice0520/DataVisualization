@@ -210,9 +210,6 @@ function Update_scatter(name){
         if(name == "Global"){
             tmpdata = data
         }
-        else if (name == "America"){
-            tmpdata = data.filter(d => (d.continent == "South America" || d.continent == "North America"))
-        }
         else{
             tmpdata = data.filter(d => d.continent == name)
         }
@@ -271,9 +268,6 @@ function Update_scatter(name){
                         return 0.7;
                     }
                     else if(d.continent == name){
-                        return 0.8;
-                    }
-                    else if(name == "America" && (d.continent == "South America" || d.continent == "North America")){
                         return 0.8;
                     }
                     else{
