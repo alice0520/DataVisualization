@@ -69,7 +69,7 @@ var g_line = [g_line1, g_line2, g_line3]
 var g_line_all = [g_line_all1, g_line_all2, g_line_all3]
 var dotsG = [dotsG1, dotsG2, dotsG3]
 
-d3.csv("/WorldHappiness.csv").then(data =>{
+d3.csv("WorldHappiness_Corruption_2015_2020.csv").then(data =>{
     data.forEach(d => {
         d.Year = Number(d.Year);
         d.cpi_score = Number(d.cpi_score);
