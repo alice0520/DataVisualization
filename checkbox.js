@@ -198,10 +198,12 @@ function Select_Two_Continent() {
                 flag = 1
             }
         }
+        notSelected = false;
     }
     else{
-        continent_A = null
-        continent_B = null
+        notSelected = true;
+        // continent_A = null
+        // continent_B = null
     }
 }
 

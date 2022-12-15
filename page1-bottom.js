@@ -17,6 +17,7 @@ var bar_chart_g1 = bar_chart_g.append("g")
                                 .attr("transform", `translate(0, ${MARGIN.TOP})`);
 var bar_chart_g1_text1= bar_chart_g.append("g").append("text");
 var bar_chart_g1_text2= bar_chart_g.append("g").append("text");
+var bar_chart_g1_bars = bar_chart_g1.append("g");
 var bar_chart_g2 = bar_chart_g.append("g")
                                 .attr("transform", `translate(0, ${MARGIN.TOP})`);
 var bar_chart_g2_text1= bar_chart_g.append("g").append("text");
@@ -51,6 +52,7 @@ var bar_chart_g2_y=bar_chart_g2.append("g")
                                 .attr("transform", `translate(0, ${HEIGHT*2})`);
 var bar_chart_g2_x=bar_chart_g2.append("g").attr("transform", `translate(0, ${HEIGHT*3})`);
 var selectedFeature="happiness_score";
+var notSelected = false;
 function changeFeature(){
     selectedFeature = document.getElementById("Features").value;
     console.log(selectedFeature);
@@ -92,7 +94,7 @@ function Draw_Barchart(){
         x = d3.scaleBand()
                     .domain(Array.from(years))
                     .range([0, WIDTH]);
-    
+        console.log(x.bandwidth(),WIDTH);
         xAxisCall = d3.axisBottom(x)
                             .ticks(5);
         bar_chart_g1_x.call(xAxisCall);
@@ -145,7 +147,7 @@ function Draw_Barchart(){
         
         // console.log(conti_year_avg);
         
-        bar_chart_g1.selectAll("rect")
+        bar_chart_g1_bars.selectAll("rect")
                     .data(conti_year_avg)
                     .enter()
                     .append("rect")
@@ -469,7 +471,7 @@ function Update_Barchart(){
                     .range([HEIGHT, 0]);
         // // console.log(y.domain());                    
         yAxisCall = d3.axisLeft(y)
-                            .ticks(5);
+                        .ticks(5);
         // The first bar chart
         bar_chart_g1_y.transition().duration(500).call(yAxisCall);
     
@@ -484,37 +486,41 @@ function Update_Barchart(){
             var contiA_data = data.filter(a => a.continent==continent_A&&a.Year==year);
             var contiB_data = data.filter(a => a.continent==continent_B&&a.Year==year);
             var sum=0,cnt=0;
-            contiA_data.forEach(d=>{
-                sum+=d[selectedFeature];
-                cnt+=1;
-            })
+            if(!notSelected){
+                contiA_data.forEach(d=>{
+                    sum+=d[selectedFeature];
+                    cnt+=1;
+                })
+            }
+            
             var element = {};
             element["continent"]=continent_A;
             element["Year"]=year;
-            element["avg"]=sum/cnt;
+            element["avg"]=cnt==0? y.domain()[0] : sum/cnt;
             conti_year_avg.push(element);
 
             sum=0;
             cnt=0;
-            contiB_data.forEach(d=>{
-                sum+=d[selectedFeature];
-                cnt+=1;
-            })
+            if(!notSelected){
+                contiB_data.forEach(d=>{
+                    sum+=d[selectedFeature];
+                    cnt+=1;
+                })
+            }
+
             element = {};
             element["continent"]=continent_B;
             element["Year"]=year;
-            element["avg"]=sum/cnt;
+            element["avg"]=cnt==0? y.domain()[0] : sum/cnt;
             conti_year_avg.push(element);
         })
         
         console.log(conti_year_avg);
         
-        bar_chart_g1.selectAll("rect")
-                    .remove();
-        bar_chart_g1.selectAll("rect")
+        bar_chart_g1_bars.selectAll("rect")
                     .data(conti_year_avg)
-                    .enter()
-                    .append("rect")
+                    .transition()
+                    .duration(500)
                     .attr("x", d=>xSubgroup(d.continent)+x(d.Year)+ (d.continent==continent_A? xSubgroup.bandwidth()*1/3 : 0))
                     .attr("y", d=>y(d.avg))
                     .attr("width", xSubgroup.bandwidth()*2/3)
@@ -540,12 +546,14 @@ function Update_Barchart(){
             var sum = 0;
             var country_avg = {};
             var continent;
-            oneCountryData.forEach(d=>{
-                sum+=d[selectedFeature];
-                continent=d.continent;
-            })
+            if(!notSelected){
+                oneCountryData.forEach(d=>{
+                    sum+=d[selectedFeature];
+                    continent=d.continent;
+                })
+            }
             country_avg["country"]=country;
-            country_avg["avg"]=sum/6;
+            country_avg["avg"]=notSelected? y_country.domain()[0] : sum/6;
             country_avg["continent"]=continent;
             country_data.push(country_avg);
         })
@@ -561,7 +569,7 @@ function Update_Barchart(){
                 return d3.ascending(a.country, b.country);
             })
         }
-        console.log(country_data);
+        // console.log(country_data);
         x_country = d3.scaleBand()
                     .domain(country_data.map(function(d) {
                         return d.country;
@@ -585,13 +593,11 @@ function Update_Barchart(){
                     .duration(500)
                     .call(yAxisCall_2nd);
 
-        bar_chart_g2_bars.selectAll("rect")
-                        .remove();
 
         bar_chart_g2_bars.selectAll("rect")
                         .data(country_data)
-                        .enter()
-                        .append("rect")
+                        .transition()
+                        .duration(500)
                         .attr("x", (d)=>x_country(d.country))
                         .attr("y", (d)=>y_country(d.avg))
                         .attr("width", x_country.bandwidth())
@@ -607,11 +613,13 @@ function Update_Barchart(){
             var contiA_data = data.filter(a => a.continent==continent_A);
             var contiB_data = data.filter(a => a.continent==continent_B);
             var sum=0,cnt=0,max=0;
-            contiA_data.forEach(d=>{
-                sum+=d[feature];
-                cnt+=1;
-                if(d[feature]>max) max=d[feature];
-            })
+            if(!notSelected){
+                contiA_data.forEach(d=>{
+                    sum+=d[feature];
+                    cnt+=1;
+                    if(d[feature]>max) max=d[feature];
+                })
+            }
             var element = {};
             element["continent"]=continent_A;
             element["feature"]=feature;
@@ -621,11 +629,13 @@ function Update_Barchart(){
             sum=0;
             cnt=0;
             max=0;
-            contiB_data.forEach(d=>{
-                sum+=d[feature];
-                cnt+=1;
-                if(d[feature]>max) max=d[feature];
-            })
+            if(!notSelected){
+                contiB_data.forEach(d=>{
+                    sum+=d[feature];
+                    cnt+=1;
+                    if(d[feature]>max) max=d[feature];
+                })
+            }
             element = {};
             element["continent"]=continent_B;
             element["avg"]=max==0? 0: (sum/cnt)/max;
