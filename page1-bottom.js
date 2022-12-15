@@ -200,6 +200,11 @@ function Draw_Barchart(){
                 return d3.descending(a.avg, b.avg);
             })
         }
+        else{
+            country_data=country_data.sort(function(a, b) {
+                return d3.ascending(a.country, b.country);
+            })
+        }
         // console.log(country_data);
         x_country = d3.scaleBand()
                     .domain(country_data.map(function(d) {
@@ -366,6 +371,11 @@ function Draw_Barchart(){
             if(clicked){
                 country_data=country_data.sort(function(a, b) {
                     return d3.descending(a.avg, b.avg);
+                })
+            }
+            else{
+                country_data=country_data.sort(function(a, b) {
+                    return d3.ascending(a.country, b.country);
                 })
             }
             // console.log(country_data);
@@ -546,6 +556,11 @@ function Update_Barchart(){
                 return d3.descending(a.avg, b.avg);
             })
         }
+        else{
+            country_data=country_data.sort(function(a, b) {
+                return d3.ascending(a.country, b.country);
+            })
+        }
         console.log(country_data);
         x_country = d3.scaleBand()
                     .domain(country_data.map(function(d) {
@@ -675,6 +690,11 @@ function Update_Barchart(){
             if(clicked){
                 country_data=country_data.sort(function(a, b) {
                     return d3.descending(a.avg, b.avg);
+                })
+            }
+            else{
+                country_data=country_data.sort(function(a, b) {
+                    return d3.ascending(a.country, b.country);
                 })
             }
             // console.log(country_data);
