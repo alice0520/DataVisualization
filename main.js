@@ -1,12 +1,8 @@
-const width = 1300;
-const height = 110;
-
 let select = document.querySelector("div #view");
 select.addEventListener("change", selectFun);
 
 function selectFun() {
     const switchValue = select.options[select.selectedIndex].value;
-    // console.log(switchValue)
     if(switchValue == "global") {
         document.getElementById("local-view").style = "display:none";
         document.getElementById("continent").style = "display:none";

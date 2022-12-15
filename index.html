@@ -55,9 +55,8 @@
 <body>
 	<div id="local-view" style="display: inline-block">
 		<div id="map-local-view" style="display: inline-block">
-			<input type="range" name="year_slider" id="year-slider" list="yearlist" min="2015" max="2020" value="2015" style="transform: translate(150px, 450px); width: 550px; " onchange="changeYear()">
-			<br>
-			<input name="year" id="year-input" value="2015" style="transform: translate(720px, -75px); width: 60px; height: 20px; text-align: center;" disabled="disabled">
+			<input type="range" name="year_slider" id="year-slider" list="yearlist" min="2015" max="2020" value="2015" style="transform: translate(100px, 450px); width: 550px; " onchange="changeYear()">
+			<input name="year" id="year-input" value="2015" style="transform: translate(-220px, 470px); width: 60px; height: 20px; text-align: center;" disabled="disabled">
 			
 			<datalist id="yearlist">
 				<option value="2015" label="2015"></option>
@@ -68,7 +67,7 @@
 				<option value="2020" label="2020"></option>
 			</datalist>
 
-			<select id="selectFeature" style="transform: translate(650px, 80px); width: 130px; height: 30px; text-align: center;">
+			<select id="selectFeature" style="transform: translate(100px, 90px); width: 130px; height: 30px; text-align: center;">
 				<option value = "happiness_score">Happiness Score</option>
 				<option value = "gdp_per_capita">GDP Per Capita</option>
 				<option value = "family">Family</option>
@@ -104,9 +103,9 @@
 	<script src="d3-tip.js"></script>
 	<script src="main.js"></script>
 	<script src="local_view_up.js"></script>
+	<script src="project.js"></script>
 	<script src="page1-bottom.js"></script>
 	<script src="checkbox.js"></script>
-	<script src="project.js"></script>
 </body>
 </html>
 
