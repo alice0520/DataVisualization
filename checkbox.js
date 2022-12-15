@@ -1,7 +1,7 @@
 data_origin = d3.csv("WorldHappiness_Corruption_2015_2020.csv");
 data_map = d3.json("world-map.json")
 // global view map
-const map_global_view_width = 800
+const map_global_view_width = 650
 const map_global_view_height = 500
 const svg_map = d3.select("#map_global_view")
                     .append("svg")

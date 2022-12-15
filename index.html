@@ -7,8 +7,8 @@
 </head>
 <header>
 	<div>
-		<h1 style="font-family: sans-serif; float: left; position: absolute; left: 20px;">World Happiness Report</h1>
-		<div style="position: absolute; right: 0px;">
+		<h1 style="font-family: sans-serif; float: left; position: absolute; left: 20px;">World Happiness Report (2015 - 2020)</h1>
+		<div style="position: absolute; right: 0px; display: inline-block">
 			<select class="select" id="continent" onchange="changeContinent()">
 				<option value = "Global">Global</option>
 				<option value = "Asia">Asia</option>
@@ -81,11 +81,40 @@
 		}
 	</style>
 <body>
-	<div id="local-view"></div>
+	<div id="local-view" style="display: inline-block">
+		<div id="map-local-view" style="display: inline-block">
+			<input type="range" name="year_slider" id="year-slider" list="yearlist" min="2015" max="2020" value="2015" style="transform: translate(100px, 450px); width: 550px; " onchange="changeYear()">
+			<input name="year" id="year-input" value="2015" style="transform: translate(-220px, 470px); width: 60px; height: 20px; text-align: center;" disabled="disabled">
+			
+			<datalist id="yearlist">
+				<option value="2015" label="2015"></option>
+				<option value="2016" label="2016"></option>
+				<option value="2017" label="2017"></option>
+				<option value="2018" label="2018"></option>
+				<option value="2019" label="2019"></option>
+				<option value="2020" label="2020"></option>
+			</datalist>
+
+			<select id="selectFeature" style="transform: translate(100px, 90px); width: 130px; height: 30px; text-align: center;">
+				<option value = "happiness_score">Happiness Score</option>
+				<option value = "gdp_per_capita">GDP Per Capita</option>
+				<option value = "family">Family</option>
+				<option value = "health">Health</option>
+				<option value = "freedom">Freedom</option>
+				<option value = "generosity">Generosity</option>
+				<option value = "government_trust">Government Trust</option>
+				<option value = "dystopia_residual">Dystopia Residual</option>
+				<option value = "social_support">Social Support</option>
+				<option value = "cpi_score">CPI Score</option>
+			</select>
+		</div>
+		<div id="scatter_plot" style="display: inline-block"></div>
+	</div>
+	</div>
 	<div id="global-view" style="display: none;">
 		<div id="map_checkbox_piechart">
 			<div id="map_global_view" style="display: inline-block"></div>
-			<div id="checkbox" style="display:inline-block">
+			<div id="checkbox" style="display:inline-block; transform: translate(0px, -100px);">
 			<text>Continent<br /></text>
 			<input type="checkbox" id="Asia_checkbox" checked> Asia<br />
 			<input type="checkbox" id="Europe_checkbox"> Europe<br />
@@ -93,7 +122,7 @@
 			<input type="checkbox" id="Australia_checkbox"> Australia<br />
 			<input type="checkbox" id="Africa_checkbox" checked> Africa<br />
 			</div>
-			<div id="pie_chart" style="display: inline-block"></div>
+			<div id="pie_chart" style="display: inline-block; transform: translate(100px, -100px);"></div>
 		</div>
 		<div id="bar_chart_global_view" style="display: inline-block">
 			<select class="feature-selection" id="features" onchange="changeFeature()">
@@ -118,9 +147,13 @@
 	<script src="d3-tip.js"></script>
 	<script src="main.js"></script>
 	<script src="local_view_up.js"></script>
+	<script src="project.js"></script>
 	<script src="page1-bottom.js"></script>
 	<script src="checkbox.js"></script>
 	<script src="pie_chart.js"></script>
 </body>
 </html>
+
+	
+
 
