@@ -1,26 +1,58 @@
 const FWith = 400, FHeight = 300;
-const FLeftTopX = 100, FLeftTopY = 100;
-const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 20, BOTTOM: 100 }
-const WIDTH = FWith - (MARGIN.LEFT + MARGIN.RIGHT)
-const HEIGHT = FHeight - (MARGIN.TOP + MARGIN.BOTTOM)
+const FLeftTopX = 100, FLeftTopY = 30;
+const MARGIN = { LEFT: 50, RIGHT: 20, TOP: 20, BOTTOM: 100 };
+const WIDTH = FWith - (MARGIN.LEFT + MARGIN.RIGHT);
+const HEIGHT = FHeight - (MARGIN.TOP + MARGIN.BOTTOM);
+var clicked = false;
 
 const BarChart_svg = d3.select("#bar_chart_global_view")
                 .append("svg")
                 .attr("width", 2000)
-                .attr("height", 2000);
-const bar_chart_g1 = BarChart_svg.append("g")
+                .attr("height", 700);
+const bar_chart_g = BarChart_svg.append("g")
                 .attr("transform", `translate(${FLeftTopX + MARGIN.LEFT}, ${FLeftTopY + MARGIN.TOP})`);
+var selectedFeature="happiness_score";
+function changeFeature(){
+    selectedFeature = document.getElementById("features").value;
+    console.log(selectedFeature);
+    Update_Barchart();
+}
+
+function clickSortButton(){
+    clicked = !clicked;
+    Update_Barchart();
+}
 
 function Update_Barchart(){
     d3.selectAll("#bar_chart_global_view g > *").remove();
     d3.csv("WorldHappiness_Corruption_2015_2020.csv",d3.autoType).then(data =>{
+        console.log(data);
         var color;
         data = data.filter(a => a.continent==continent_A || a.continent==continent_B );
         // X, Y ticks for the first bar chart
-        years = ['2015','2016','2017','2018','2019','2020'];
+        var years = new Set();
+        data.forEach(element => {
+            years.add(element.Year);
+        });
+        const bar_chart_g1 = bar_chart_g.append("g")
+                                        .attr("transform", `translate(0, ${MARGIN.TOP})`);
+        const bar_chart_g1_text= bar_chart_g.append("g");
+        bar_chart_g1_text.append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text(selectedFeature);
+        bar_chart_g1_text.append("text")
+                        .attr("x", WIDTH/2)
+                        .attr("y", HEIGHT+MARGIN.TOP*3)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("years");
+
         const x = d3.scaleBand()
-                    .domain(years)
-                    .range([0, WIDTH])
+                    .domain(Array.from(years))
+                    .range([0, WIDTH]);
     
         const xAxisCall = d3.axisBottom(x)
                             .ticks(5);
@@ -29,14 +61,15 @@ function Update_Barchart(){
                     .call(xAxisCall)
     
         const y = d3.scaleLinear()
-                    .domain(d3.extent(data, d=>d.happiness_score))
+                    .domain(d3.extent(data, d=>d[selectedFeature]))
                     .range([HEIGHT, 0])
         // console.log(y.domain());                    
         const yAxisCall = d3.axisLeft(y)
                             .ticks(5);
         
         // The first bar chart
-        bar_chart_g1.append("g").call(yAxisCall);
+        bar_chart_g1.append("g")
+                    .call(yAxisCall);
     
         var xSubgroup = d3.scaleBand()
                         .domain([continent_A,continent_B])
@@ -45,37 +78,335 @@ function Update_Barchart(){
         color = d3.scaleOrdinal()
                     .domain(xSubgroup.domain())
                     .range([color_A,color_B]);
-        console.log(color_A)
-        console.log(color_B)
-        // console.log("data",data.filter(a => a.continent==continent_B ));
-        bar_chart_g1.append("g")
-                    .selectAll("rect")
-                    .data(data)
+
+        var conti_year_avg = [];
+        years.forEach(year=>{
+            var contiA_data = data.filter(a => a.continent==continent_A&&a.Year==year);
+            var contiB_data = data.filter(a => a.continent==continent_B&&a.Year==year);
+            var sum=0,cnt=0;
+            contiA_data.forEach(d=>{
+                sum+=d[selectedFeature];
+                cnt+=1;
+            })
+            var element = {};
+            element["continent"]=continent_A;
+            element["Year"]=year;
+            element["avg"]=sum/cnt;
+            conti_year_avg.push(element);
+
+            sum=0;
+            cnt=0;
+            contiB_data.forEach(d=>{
+                sum+=d[selectedFeature];
+                cnt+=1;
+            })
+            element = {};
+            element["continent"]=continent_B;
+            element["Year"]=year;
+            element["avg"]=sum/cnt;
+            conti_year_avg.push(element);
+        })
+        
+        // console.log(conti_year_avg);
+        
+        bar_chart_g1.selectAll("rect")
+                    .data(conti_year_avg)
                     .enter()
                     .append("rect")
-                    .attr("x", function(d) { return xSubgroup(d.continent)+x(d.Year)+ (d.continent==continent_A? xSubgroup.bandwidth()*1/3 : 0); })
-                    .attr("y", function(d) { return y(d.happiness_score); })
+                    .attr("x", d=>xSubgroup(d.continent)+x(d.Year)+ (d.continent==continent_A? xSubgroup.bandwidth()*1/3 : 0))
+                    .attr("y", d=>y(d.avg))
                     .attr("width", xSubgroup.bandwidth()*2/3)
-                    .attr("height", function(d) { return HEIGHT - y(d.happiness_score); })
-                    .attr("fill", function(d) { return color(d.continent); });
+                    .attr("height", d=>HEIGHT-y(d.avg))
+                    .style("fill", function(d) { return color(d.continent); })
+                    .style('stroke','black');
+        
     
         // X, Y ticks for the second bar chart
-        // years = ['2015','2016','2017','2018','2019','2020'];
-        // const x_2nd = d3.scaleBand()
-        //             .domain(years)
-        //             .range([0, WIDTH])
+        const bar_chart_g2 = bar_chart_g.append("g")
+                                        .attr("transform", `translate(0, ${MARGIN.TOP})`);
+        const bar_chart_g2_text= bar_chart_g.append("g");
+        bar_chart_g2_text.append("text")
+                        .attr("x", 0)
+                        .attr("y", HEIGHT*2)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text(selectedFeature);
+        bar_chart_g2_text.append("text")
+                        .attr("x", WIDTH*2.25)
+                        .attr("y", HEIGHT*3+MARGIN.TOP*5)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("countries");
+
+        var countries = new Set();
+        data.forEach(element => {
+            countries.add(element.Country);
+        });
+        // console.log(Array.from(countries));
+
+        var country_data = [];
+
+        countries.forEach(country=>{
+            var oneCountryData = data.filter(a=>a.Country==country);
+            var sum = 0;
+            var country_avg = {};
+            var continent;
+            oneCountryData.forEach(d=>{
+                sum+=d[selectedFeature];
+                continent=d.continent;
+            })
+            country_avg["country"]=country;
+            country_avg["avg"]=sum/6;
+            country_avg["continent"]=continent;
+            country_data.push(country_avg);
+        })
+        // console.log(country_data);
+        if(clicked){
+            country_data=country_data.sort(function(a, b) {
+                return d3.descending(a.avg, b.avg);
+            })
+        }
+        // console.log(country_data);
+        var x_country = d3.scaleBand()
+                    .domain(country_data.map(function(d) {
+                        return d.country;
+                    }))
+                    .range([0, WIDTH*4.5]);
+        var xAxisCall_2nd = d3.axisBottom(x_country)
+                                .ticks(5);
+        bar_chart_g2.append("g")
+                    .attr("transform", `translate(0, ${HEIGHT*3})`)
+                    .call(xAxisCall_2nd)
+                    .selectAll("text")
+                    .attr("text-anchor","end")
+                    .attr("transform","rotate(-30)");
     
-        // const xAxisCall_2nd = d3.axisBottom(x)
-        //                         .ticks(5);
-        // bar_chart_g1.append("g")
-        //             .attr("transform", `translate(${WIDTH+MARGIN.LEFT}, ${HEIGHT})`)
-        //             .call(xAxisCall)
+        const y_country = d3.scaleLinear()
+                    .domain(d3.extent(data, d=>d[selectedFeature]))
+                    .range([HEIGHT, 0])
+         
+        const yAxisCall_2nd = d3.axisLeft(y_country)
+                                .ticks(5);
+        bar_chart_g2.append("g")
+                    .attr("transform", `translate(0, ${HEIGHT*2})`)
+                    .call(yAxisCall_2nd);
+
+        const bar_chart_g2_bars=bar_chart_g2.append("g").attr("transform", `translate(0, ${HEIGHT*2})`);
+        bar_chart_g2_bars.selectAll("rect")
+                        .data(country_data)
+                        .enter()
+                        .append("rect")
+                        .attr("x", (d)=>x_country(d.country))
+                        .attr("y", (d)=>y_country(d.avg))
+                        .attr("width", x_country.bandwidth)
+                        .attr("height", (d)=>HEIGHT-y_country(d.avg))
+                        .style("fill", function(d) { return color(d.continent); })
+                        .style('stroke','black');
+
+        // X, Y ticks for the third bar chart
+
+        const features = ["gdp_per_capita","family","health","freedom","generosity",
+        "government_trust","dystopia_residual","social_support","cpi_score"];
+
+        // console.log(Array.from(countries));
+
+        const bar_chart_g3 = bar_chart_g.append("g")
+                                        .attr("transform", `translate(${WIDTH+MARGIN.LEFT*2.5}, ${MARGIN.TOP})`);
+        const bar_chart_g3_text= bar_chart_g.append("g");
+        bar_chart_g3_text.append("text")
+                        .attr("x", WIDTH+MARGIN.LEFT*2.5)
+                        .attr("y", 0)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("normalized");
+        bar_chart_g3_text.append("text")
+                        .attr("x", WIDTH*3)
+                        .attr("y", HEIGHT+MARGIN.TOP*4)
+                        .attr("font-size", "15px")
+                        .attr("text-anchor", "middle")
+                        .text("features");
+
+        const x_feature = d3.scaleBand()
+                            .domain(features)
+                            .range([0, WIDTH*3]);
     
-        // const y_2nd = d3.scaleLinear()
-        //             .domain(d3.extent(data, d=>d.happiness_score))
-        //             .range([HEIGHT, 0])
-        //             console.log(y.domain());           
-        // const yAxisCall_2nd = d3.axisLeft(y)
-        //                     .ticks(5);
+        const xAxisCall_3rd = d3.axisBottom(x_feature)
+                                .ticks(5);
+
+        bar_chart_g3.append("g")
+                    .attr("transform", `translate(0, ${HEIGHT})`)
+                    .call(xAxisCall_3rd)
+                    .selectAll("text")
+                    .attr("text-anchor","middle");
+    
+        const y_feature = d3.scaleLinear()
+                    .domain([0,1])
+                    .range([HEIGHT, 0])
+         
+        const yAxisCall_3rd = d3.axisLeft(y_feature)
+                                .ticks(5);
+        bar_chart_g3.append("g")
+                    .call(yAxisCall_3rd);
+
+        var xSubgroup_feature = d3.scaleBand()
+                        .domain([continent_A,continent_B])
+                        .range([0, x_feature.bandwidth()]);
+        var feature_avg = [];
+        features.forEach(feature=>{
+            // console.log(feature);
+            var contiA_data = data.filter(a => a.continent==continent_A);
+            var contiB_data = data.filter(a => a.continent==continent_B);
+            var sum=0,cnt=0,max=0;
+            contiA_data.forEach(d=>{
+                sum+=d[feature];
+                cnt+=1;
+                if(d[feature]>max) max=d[feature];
+            })
+            var element = {};
+            element["continent"]=continent_A;
+            element["feature"]=feature;
+            element["avg"]=max==0? 0: (sum/cnt)/max;
+            feature_avg.push(element);
+
+            sum=0;
+            cnt=0;
+            max=0;
+            contiB_data.forEach(d=>{
+                sum+=d[feature];
+                cnt+=1;
+                if(d[feature]>max) max=d[feature];
+            })
+            element = {};
+            element["continent"]=continent_B;
+            element["avg"]=max==0? 0: (sum/cnt)/max;
+            element["feature"]=feature;
+            feature_avg.push(element);
+        })
+        const bar_chart_g3_bars=bar_chart_g3.append("g");
+        bar_chart_g3_bars.selectAll("rect")
+                        .data(feature_avg)
+                        .enter()
+                        .append("rect")
+                        .attr("x", (d) => xSubgroup_feature(d.continent)+x_feature(d.feature)+(d.continent==continent_A? xSubgroup_feature.bandwidth()*1/3 : 0))
+                        .attr("y", (d) => y_feature(d.avg))
+                        .attr("width", xSubgroup_feature.bandwidth()*2/3)
+                        .attr("height", (d) => HEIGHT-y_feature(d.avg))
+                        .style("fill", function(d) { return color(d.continent); })
+                        .style('stroke','black');
+
+        const bg = bar_chart_g1.append("g");
+        var bursh = d3.brushX()
+                    .extent([[0, 0], [WIDTH, HEIGHT]])
+                    .on("start", Brushed)
+                    .on("brush", Brushed)
+                    .on("end", EndBrushed);
+
+        bg.call(bursh);
+        var min_year=2015,max_year=2020;
+        function Brushed(){
+            var extent = d3.event.selection;
+            
+            if(extent[0]!=extent[1]){
+                min_year = x.domain()[Math.floor((extent[0] / x.step()))];
+                max_year = x.domain()[Math.floor((extent[1] / x.step()))];
+                if(max_year==undefined) max_year=2020;
+                if(min_year==undefined) min_year=2015;
+                // console.log(min_year,max_year);
+            }
+            else{
+                // console.log(extent);
+                min_year=2015;
+                max_year=2020;
+            }
+        }
+
+        function EndBrushed(){
+            country_data = [];
+            countries.forEach(country=>{
+                var oneCountryData = data.filter(a=>a.Country==country&&a.Year<=max_year&&a.Year>=min_year);
+                var sum = 0;
+                var country_avg = {};
+                var continent;
+                // console.log(oneCountryData);
+                oneCountryData.forEach(d=>{
+                    sum+=d[selectedFeature];
+                    continent=d.continent;
+                })
+                country_avg["country"]=country;
+                country_avg["avg"]=sum/(max_year-min_year+1);
+                country_avg["continent"]=continent;
+                country_data.push(country_avg);
+            })
+            if(clicked){
+                country_data=country_data.sort(function(a, b) {
+                    return d3.descending(a.avg, b.avg);
+                })
+            }
+            // console.log(country_data);
+            x_country = d3.scaleBand()
+                            .domain(country_data.map(function(d) {
+                                return d.country;
+                            }))
+                            .range([0, WIDTH*4.5]);
+            xAxisCall_2nd = d3.axisBottom(x_country)
+                                .ticks(5);
+            bar_chart_g2.call(xAxisCall_2nd)
+                        .selectAll("text")
+                        .attr("text-anchor","end")
+                        .attr("transform","rotate(-30)");
+            bar_chart_g2_bars.selectAll("rect")
+                        .data(country_data)
+                        .transition()
+                        .duration(1000)
+                        .attr("x", (d)=>x_country(d.country))
+                        .attr("y", (d)=>y_country(d.avg))
+                        .attr("width", x_country.bandwidth)
+                        .attr("height", function(d){ return HEIGHT-y_country(d.avg)})
+                        .style("fill", function(d) { return color(d.continent); })
+                        .style('stroke','black');
+            feature_avg = [];
+            features.forEach(feature=>{
+                // console.log(feature);
+                var contiA_data = data.filter(a => a.continent==continent_A&&a.Year<=max_year&&a.Year>=min_year);
+                var contiB_data = data.filter(a => a.continent==continent_B&&a.Year<=max_year&&a.Year>=min_year);
+                var sum=0,cnt=0,max=0;
+                contiA_data.forEach(d=>{
+                    sum+=d[feature];
+                    cnt+=1;
+                    if(d[feature]>max) max=d[feature];
+                })
+                var element = {};
+                element["continent"]=continent_A;
+                element["feature"]=feature;
+                element["avg"]=max==0? 0:(sum/cnt)/max;
+                feature_avg.push(element);
+    
+                sum=0;
+                cnt=0;
+                max=0;
+                contiB_data.forEach(d=>{
+                    sum+=d[feature];
+                    cnt+=1;
+                    if(d[feature]>max) max=d[feature];
+                })
+                element = {};
+                element["continent"]=continent_B;
+                element["avg"]=max==0? 0:(sum/cnt)/max;
+                element["feature"]=feature;
+                feature_avg.push(element);
+            })
+            // console.log(feature_avg);
+            bar_chart_g3_bars.selectAll("rect")
+                        .data(feature_avg)
+                        .transition()
+                        .duration(1000)
+                        .attr("x", (d) => xSubgroup_feature(d.continent)+x_feature(d.feature)+(d.continent==continent_A? xSubgroup_feature.bandwidth()*1/3 : 0))
+                        .attr("y", (d) => y_feature(d.avg))
+                        .attr("width", xSubgroup_feature.bandwidth()*2/3)
+                        .attr("height", (d) => HEIGHT-y_feature(d.avg))
+                        .style("fill", function(d) { return color(d.continent); })
+                        .style('stroke','black');
+        }
+
     })
 }
