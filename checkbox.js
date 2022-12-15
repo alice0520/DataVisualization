@@ -72,7 +72,7 @@ d3.select("#Africa_checkbox").on("change",Checkbox_Africa);
 
 Update_GlobalView_Map();
 Select_Two_Continent();
-Update_Barchart();
+Draw_Barchart();
 
 function Checkbox_Asia(){
     if(d3.select("#Asia_checkbox").property("checked")){
