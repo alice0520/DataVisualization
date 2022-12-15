@@ -193,7 +193,7 @@ function Update_scatter(name){
     else{
         features = America_features
     }
-    d3.csv("/WorldHappiness.csv").then(data =>{
+    d3.csv("WorldHappiness_Corruption_2015_2020.csv").then(data =>{
         data.forEach(d => {
             d.Year = Number(d.Year);
             d.cpi_score = Number(d.cpi_score);
