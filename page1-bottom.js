@@ -688,12 +688,14 @@ function Update_Barchart(){
                 var country_avg = {};
                 var continent;
                 // console.log(oneCountryData);
-                oneCountryData.forEach(d=>{
-                    sum+=d[selectedFeature];
-                    continent=d.continent;
-                })
+                if(!notSelected){
+                    oneCountryData.forEach(d=>{
+                        sum+=d[selectedFeature];
+                        continent=d.continent;
+                    })
+                }
                 country_avg["country"]=country;
-                country_avg["avg"]=sum/(max_year-min_year+1);
+                country_avg["avg"]=notSelected? y_country.domain()[0]:sum/(max_year-min_year+1);
                 country_avg["continent"]=continent;
                 country_data.push(country_avg);
             })
@@ -735,11 +737,13 @@ function Update_Barchart(){
                 var contiA_data = data.filter(a => a.continent==continent_A&&a.Year<=max_year&&a.Year>=min_year);
                 var contiB_data = data.filter(a => a.continent==continent_B&&a.Year<=max_year&&a.Year>=min_year);
                 var sum=0,cnt=0,max=0;
-                contiA_data.forEach(d=>{
-                    sum+=d[feature];
-                    cnt+=1;
-                    if(d[feature]>max) max=d[feature];
-                })
+                if(!notSelected){
+                    contiA_data.forEach(d=>{
+                        sum+=d[feature];
+                        cnt+=1;
+                        if(d[feature]>max) max=d[feature];
+                    })
+                }
                 var element = {};
                 element["continent"]=continent_A;
                 element["feature"]=feature;
@@ -749,11 +753,13 @@ function Update_Barchart(){
                 sum=0;
                 cnt=0;
                 max=0;
-                contiB_data.forEach(d=>{
-                    sum+=d[feature];
-                    cnt+=1;
-                    if(d[feature]>max) max=d[feature];
-                })
+                if(!notSelected){
+                    contiB_data.forEach(d=>{
+                        sum+=d[feature];
+                        cnt+=1;
+                        if(d[feature]>max) max=d[feature];
+                    })
+                }
                 element = {};
                 element["continent"]=continent_B;
                 element["avg"]=max==0? 0:(sum/cnt)/max;
