@@ -178,8 +178,8 @@ function drawMap(){
                         .attr("class", "d3-tip")
                         .html(d=>("Country: " + d.Country
                                 + "<br>Year: " + d.Year 
-                                + "<br><br>Happiness Score: " + d.happiness_score 
-                                + "<br>GDP Per Capita: " + d.gdp_per_capita 
+                                + "<br>Happiness Score: " + d.happiness_score 
+                                + "<br><br>GDP Per Capita: " + d.gdp_per_capita 
                                 + "<br>Family: " + d.family 
                                 + "<br>Health: " + d.health 
                                 + "<br>Freedom: " + d.freedom 
@@ -196,6 +196,26 @@ function drawMap(){
             });
         });
     });
+
+    local_svg.append("rect")
+        .attr("x", 520)
+        .attr("y", 50)
+        .attr("width", 140)
+        .attr("height", 30)
+        .attr("stroke", "black")
+        .attr("fill", "white");
+    local_svg.append("circle")
+        .attr("cx", 540)
+        .attr("cy", 65)
+        .attr("r", 5)
+        .attr("fill", "none")
+        .attr("stroke", "black");
+    local_svg.append("text")
+        .attr("x", 550)
+        .attr("y", 65)
+        .text("happiness score")
+        .attr("font-size", "15px")
+        .attr("alignment-baseline", "middle");
 }
 
 function changeMapCircleColor(){
