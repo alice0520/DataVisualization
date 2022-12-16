@@ -200,7 +200,7 @@ function drawMap(){
     local_svg.append("rect")
         .attr("x", 520)
         .attr("y", 50)
-        .attr("width", 140)
+        .attr("width", 160)
         .attr("height", 30)
         .attr("stroke", "black")
         .attr("fill", "white");
