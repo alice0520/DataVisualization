@@ -30,8 +30,8 @@ function draw_map_global(){
                 .attr('d', geoGenerator);
         map_checkbox_g.selectAll('.Asia')
                 .attr('fill', 'red');
-        map_checkbox_g.selectAll('.Africa')
-                .attr('fill', 'purple');
+        map_checkbox_g.selectAll('.Europe')
+                .attr('fill', 'blue');
     })
 }
 
@@ -55,15 +55,15 @@ const checkbox_width = 100
 const checkbox_height = 150
 const checkbox = d3.select("#checkbox")
 var Asia_check = 1
-var Europe_check = 0
+var Europe_check = 1
 var America_check = 0
 var Australia_check = 0
-var Africa_check = 1
+var Africa_check = 0
 var cnt_check = 2
 continent_A = "Asia"
-continent_B = "Africa"
+continent_B = "Europe"
 color_A = "red"
-color_B = "purple"
+color_B = "blue"
 d3.select("#Asia_checkbox").on("change",Checkbox_Asia);
 d3.select("#Europe_checkbox").on("change",Checkbox_Europe);
 d3.select("#America_checkbox").on("change",Checkbox_America);
@@ -210,15 +210,15 @@ function Select_Two_Continent() {
 function Reset_Default() {
     cnt_check = 2;
     Asia_check = 1
-    Africa_check = 1
+    Africa_check = 0
     America_check = 0
-    Europe_check = 0
+    Europe_check = 1
     Australia_check = 0
     document.getElementById("Asia_checkbox").checked = true;
-    document.getElementById("Europe_checkbox").checked = false;
+    document.getElementById("Europe_checkbox").checked = true;
     document.getElementById("America_checkbox").checked = false;
     document.getElementById("Australia_checkbox").checked = false;
-    document.getElementById("Africa_checkbox").checked = true;
+    document.getElementById("Africa_checkbox").checked = false;
     Update_GlobalView_Map();
     Select_Two_Continent();
     Update_Barchart();
@@ -267,8 +267,6 @@ function Update_GlobalView_Map(){
                 .attr('fill', 'blue');
         }
         if(America_check) {
-            map_checkbox_g.selectAll(".America")
-                .attr('fill', 'yellow');
             map_checkbox_g.selectAll(".America")
                 .attr('fill', 'yellow');
         }
